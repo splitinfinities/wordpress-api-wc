@@ -1,8 +1,8 @@
 exports.config = {
-  namespace: 'mycomponent',
+  namespace: 'wordpress-api',
   generateDistribution: true,
   bundles: [
-    { components: ['my-component'] }
+    { components: ['wordpress-api'] }
   ]
 };
 

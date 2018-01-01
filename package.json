@@ -18,7 +18,8 @@
     "test.watch": "jest --watch --no-cache"
   },
   "dependencies": {
-    "@stencil/core": "next"
+    "@stencil/core": "next",
+    "dexie": "^2.0.1"
   },
   "devDependencies": {
     "@stencil/dev-server": "latest",
