@@ -1,14 +1,14 @@
 {
-  "name": "my-component",
+  "name": "wordpress-api-wc",
   "version": "0.0.1",
   "description": "Stencil Component Starter",
-  "main": "dist/mycomponent.js",
+  "main": "dist/wordpress-api.js",
   "types": "dist/types/index.d.ts",
   "collection": "dist/collection/collection-manifest.json",
   "files": [
     "dist/"
   ],
-  "browser": "dist/mycomponent.js",
+  "browser": "dist/wordpress-api.js",
   "scripts": {
     "build": "stencil build",
     "dev": "sd concurrent \"stencil build --dev --watch\" \"stencil-dev-server\" ",
@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "@stencil/core": "next",
-    "dexie": "^2.0.1"
+    "dexie": "^2.0.1",
+    "wordpress-rest-api": "^0.8.0",
+    "wpapi": "^1.1.2"
   },
   "devDependencies": {
     "@stencil/dev-server": "latest",
@@ -29,14 +31,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ionic-team/stencil-component-starter.git"
+    "url": "git+https://github.com/splitinfinities/wordpress-api-wc.git"
   },
   "author": "Ionic Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ionic-team/stencil"
+    "url": "https://github.com/splitinfinities/wordpress-api-wc"
   },
-  "homepage": "https://github.com/ionic-team/stencil",
+  "homepage": "https://github.com/splitinfinities/wordpress-api-wc",
   "jest": {
     "transform": {
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/@stencil/core/testing/jest.preprocessor.js"

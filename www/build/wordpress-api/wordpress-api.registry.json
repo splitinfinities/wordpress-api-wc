@@ -1,0 +1,32 @@
+{
+  "namespace": "wordpress-api",
+  "components": [
+    [
+      "wordpress-api",
+      [
+        "wordpress-api",
+        "wordpress-api"
+      ],
+      0,
+      [
+        [
+          "baseUrl",
+          1,
+          1,
+          2
+        ],
+        [
+          "ready",
+          5
+        ],
+        [
+          "wp",
+          5
+        ]
+      ]
+    ]
+  ],
+  "core": "wordpress-api.core.js",
+  "coreSsr": "wordpress-api.core.ssr.js",
+  "corePolyfilled": "wordpress-api.core.pf.js"
+}

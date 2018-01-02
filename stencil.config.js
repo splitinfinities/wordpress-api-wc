@@ -3,7 +3,7 @@ exports.config = {
   generateDistribution: true,
   bundles: [
     { components: ['wordpress-api'] }
-  ]
+  ],
 };
 
 exports.devServer = {
