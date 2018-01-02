@@ -36,7 +36,7 @@ const fileManifest = [
   },
   {
     "url": "build/wordpress-api/wordpress-api.js",
-    "revision": "76c263517ef22379964956d66e2c6e37"
+    "revision": "48acdfe16540c5bf8b655f358f3b10f2"
   },
   {
     "url": "build/wordpress-api/wordpress-api.registry.json",
@@ -44,7 +44,7 @@ const fileManifest = [
   },
   {
     "url": "index.html",
-    "revision": "325c58212275393a46da7981b64f4d80"
+    "revision": "6abde8791aadf7e49e3be20110050b89"
   }
 ];
 

@@ -35,7 +35,7 @@ export class Posts {
       await this.api.all().then((request) => {
         this.db.content.put({type: this.endpoint, count: request.total}).catch((e) => {});
 
-        this.db.posts.bulkAdd(request.data).catch(Dexie.BulkError, (e) => {
+        this.db.posts.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
           console.debug(`Added ${this.batchCount-e.failures.length} new Posts`);
         });
 
@@ -43,7 +43,7 @@ export class Posts {
 
         iterations.forEach(async () => {
           await this.api.some({limit: this.batchCount, page: currentPage++}).then((request) => {
-            this.db.posts.bulkAdd(request.data).catch(Dexie.BulkError, (e) => {
+            this.db.posts.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
               console.debug(`Added ${this.batchCount-e.failures.length} new Posts`);
             });
 

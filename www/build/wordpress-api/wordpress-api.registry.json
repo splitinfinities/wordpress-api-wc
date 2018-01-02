@@ -5,7 +5,7 @@
       "wordpress-api",
       [
         "wordpress-api",
-        "wordpress-api"
+        null
       ],
       0,
       [
@@ -28,5 +28,5 @@
   ],
   "core": "wordpress-api.core.js",
   "coreSsr": "wordpress-api.core.ssr.js",
-  "corePolyfilled": "wordpress-api.core.pf.js"
+  "corePolyfilled": "es5-build-disabled.js"
 }

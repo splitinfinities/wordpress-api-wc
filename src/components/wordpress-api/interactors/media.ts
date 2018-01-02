@@ -6,7 +6,7 @@ export class Media {
   private db;
   private api: MediaAPI;
   private endpoint = "/media";
-  private batchCount = 20;
+  private batchCount = 100;
 
   constructor(db: any, url: string = "/") {
     this.db = db;
@@ -35,7 +35,7 @@ export class Media {
       await this.api.all().then((request) => {
         this.db.content.put({type: this.endpoint, count: request.totalPages}).catch((e) => {});
 
-        this.db.media.bulkAdd(request.data).catch(Dexie.BulkError, (e) => {
+        this.db.media.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
           console.debug(`Added ${this.batchCount-e.failures.length} new Media`);
         });
 
@@ -43,7 +43,7 @@ export class Media {
 
         iterations.forEach(async () => {
           await this.api.some({limit: this.batchCount, page: currentPage++}).then((request) => {
-            this.db.media.bulkAdd(request.data).catch(Dexie.BulkError, (e) => {
+            this.db.media.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
               console.debug(`Added ${this.batchCount-e.failures.length} new Media`);
             });
 
