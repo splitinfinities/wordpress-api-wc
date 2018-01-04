@@ -25,7 +25,7 @@ More to come!
 ## Example
 
 First, queue the script: 
-`<script src='https://unpkg.com/wordpress-api-wc/dist/wordpress-api-wc.js'></script>`
+`<script src='https://unpkg.com/wordpress-api-wc/dist/wordpress-api.js'></script>`
 
 Finally, declare it on your site:
 ```html

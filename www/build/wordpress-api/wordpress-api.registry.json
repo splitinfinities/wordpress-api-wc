@@ -4,8 +4,8 @@
     [
       "wordpress-api",
       [
-        "n4tovou7",
-        "xeugkddn"
+        "wordpress-api",
+        null
       ],
       0,
       [
@@ -36,7 +36,7 @@
       1
     ]
   ],
-  "core": "wordpress-api.nviqp1nd.js",
-  "coreSsr": "wordpress-api.5t2ohrol.js",
-  "corePolyfilled": "wordpress-api.hbthyscr.js"
+  "core": "wordpress-api.core.js",
+  "coreSsr": "wordpress-api.core.ssr.js",
+  "corePolyfilled": "es5-build-disabled.js"
 }
