@@ -99,7 +99,7 @@ Coming soon!
 ### Script tag
 
 - Put a script tag similar to this `<script src='https://unpkg.com/wordpress-api-wc/dist/wordpress-api.js'></script>` in the head of your index.html
-- Then you can use the element `<wordpress-api></wordpress-api>` anywhere in your template, JSX, html etc
+- Then you can use the element `<wordpress-api base-url="https://example.website"></wordpress-api>` anywhere in your template, JSX, html etc
 
 ### Node Modules
 - Run `npm install wordpress-api-wc --save`
