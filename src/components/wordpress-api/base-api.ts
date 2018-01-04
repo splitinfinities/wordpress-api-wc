@@ -21,3 +21,12 @@ export class BaseAPI {
     return {data, total, totalPages};
   }
 }
+
+
+export class WordPressApiError {
+  error: object;
+
+  constructor (error: object) {
+    this.error = error;
+  }
+}

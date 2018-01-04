@@ -4520,7 +4520,6 @@ class Database extends Dexie {
             content: "type",
             posts: "id,slug",
             pages: "id,slug",
-            types: "id,slug",
             comments: "id,slug,post",
             media: "id,slug",
             tags: "id,slug",
@@ -4530,7 +4529,7 @@ class Database extends Dexie {
     }
 }
 
-var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
@@ -4546,7 +4545,7 @@ class BaseAPI {
         this.batchCount = batchCount;
     }
     fetch(params) {
-        return __awaiter$2(this, void 0, void 0, function* () {
+        return __awaiter$3(this, void 0, void 0, function* () {
             let response = yield fetch(this.url + this.path + this.endpoint + params);
             let data = yield response.json();
             const totalS = yield response.headers.get("x-wp-total");
@@ -4557,8 +4556,13 @@ class BaseAPI {
         });
     }
 }
+class WordPressApiError {
+    constructor(error) {
+        this.error = error;
+    }
+}
 
-var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
@@ -4575,7 +4579,7 @@ class Posts {
         this.api = new PostsAPI(url, this.endpoint, this.batchCount);
     }
     compareState() {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             let follower = yield this.db.posts.count(result => {
                 return result;
             });
@@ -4585,7 +4589,7 @@ class Posts {
         });
     }
     populate() {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             let currentPage = 1;
             if (yield this.compareState()) {
                 console.debug("Leader and follower are in sync");
@@ -4598,7 +4602,7 @@ class Posts {
                         console.debug(`Added ${this.batchCount - e.failures.length} new Posts`);
                     });
                     const iterations = Array.apply(null, { length: (request.totalPages - 1) });
-                    iterations.forEach(() => __awaiter$1(this, void 0, void 0, function* () {
+                    iterations.forEach(() => __awaiter$2(this, void 0, void 0, function* () {
                         yield this.api.some({ limit: this.batchCount, page: currentPage++ }).then((request) => {
                             this.db.posts.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
                                 console.debug(`Added ${this.batchCount - e.failures.length} new Posts`);
@@ -4612,12 +4616,12 @@ class Posts {
         });
     }
     all() {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             return this.db.posts.toArray();
         });
     }
     some(args = { limit: 20, offset: 0, page: undefined }) {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
             if (args.page) {
                 args.offset = args.limit * args.page;
@@ -4626,31 +4630,49 @@ class Posts {
         });
     }
     getByID(id) {
-        return __awaiter$1(this, void 0, void 0, function* () {
-            return this.db.posts.where("id").equals(id).first();
+        return __awaiter$2(this, void 0, void 0, function* () {
+            console.debug('post in the db?');
+            let post = yield this.db.posts.where("id").equals(id).first();
+            if (!post) {
+                console.debug('post on the app then?');
+                post = yield this.api.fetch(`/${id}`);
+                if (post.data.status !== 200) {
+                    return new WordPressApiError(post.data);
+                }
+            }
+            return post;
         });
     }
     getBySlug(slug) {
-        return __awaiter$1(this, void 0, void 0, function* () {
-            return this.db.posts.where("slug").equals(slug).first();
+        return __awaiter$2(this, void 0, void 0, function* () {
+            console.debug('post in the db?');
+            let post = yield this.db.posts.where("id").equals(slug).first();
+            if (!post) {
+                console.debug('post on the app then?');
+                post = yield this.api.fetch(`/${slug}`);
+                if (post.data.status !== 200) {
+                    return new WordPressApiError(post.data);
+                }
+            }
+            return post;
         });
     }
 }
 // PostsAPI
 class PostsAPI extends BaseAPI {
     all() {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             return this.fetch(`?per_page=${this.batchCount}`);
         });
     }
     count() {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             const result = yield this.fetch('?per_page=1');
             return result.total;
         });
     }
     some(args = { limit: 20, offset: 0, page: undefined }) {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
             if (args.page) {
                 args.offset = args.limit * args.page;
@@ -4660,7 +4682,7 @@ class PostsAPI extends BaseAPI {
     }
 }
 
-var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
@@ -4677,7 +4699,7 @@ class Pages {
         this.api = new PagesAPI(url, this.endpoint, this.batchCount);
     }
     compareState() {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             let follower = yield this.db.pages.count(result => {
                 return result;
             });
@@ -4687,7 +4709,7 @@ class Pages {
         });
     }
     populate() {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             let currentPage = 1;
             if (yield this.compareState()) {
                 console.debug("Leader and follower are in sync");
@@ -4700,7 +4722,7 @@ class Pages {
                         console.debug(`Added ${this.batchCount - e.failures.length} new Pages`);
                     });
                     const iterations = Array.apply(null, { length: (request.totalPages - 1) });
-                    iterations.forEach(() => __awaiter$3(this, void 0, void 0, function* () {
+                    iterations.forEach(() => __awaiter$4(this, void 0, void 0, function* () {
                         yield this.api.some({ limit: this.batchCount, page: currentPage++ }).then((request) => {
                             this.db.pages.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
                                 console.debug(`Added ${this.batchCount - e.failures.length} new Pages`);
@@ -4714,12 +4736,12 @@ class Pages {
         });
     }
     all() {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             return this.db.pages.toArray();
         });
     }
     some(args = { limit: 20, offset: 0, page: undefined }) {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
             if (args.page) {
                 args.offset = args.limit * args.page;
@@ -4728,12 +4750,12 @@ class Pages {
         });
     }
     getByID(id) {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             return this.db.pages.where("id").equals(id).first();
         });
     }
     getBySlug(slug) {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             return this.db.pages.where("slug").equals(slug).first();
         });
     }
@@ -4741,18 +4763,18 @@ class Pages {
 // PagesAPI
 class PagesAPI extends BaseAPI {
     all() {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             return this.fetch(`?per_page=${this.batchCount}`);
         });
     }
     count() {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             const result = yield this.fetch('?per_page=1');
             return result.total;
         });
     }
     some(args = { limit: 20, offset: 0, page: undefined }) {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
             if (args.page) {
                 args.offset = args.limit * args.page;
@@ -4762,9 +4784,107 @@ class PagesAPI extends BaseAPI {
     }
 }
 
-// Types
-
+var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // Comments
+class Comments {
+    constructor(db, url = "/") {
+        this.endpoint = "/comments";
+        this.batchCount = 100;
+        this.db = db;
+        this.api = new CommentsAPI(url, this.endpoint, this.batchCount);
+    }
+    compareState() {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            let follower = yield this.db.comments.count(result => {
+                return result;
+            });
+            let leader = yield this.api.count();
+            console.debug(this.endpoint, { "Follower": follower, "Leader": leader });
+            return follower === leader;
+        });
+    }
+    populate() {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            let currentPage = 1;
+            if (yield this.compareState()) {
+                console.debug("Leader and follower are in sync");
+            }
+            else {
+                console.debug("beginning sync...");
+                yield this.api.all().then((request) => {
+                    this.db.content.put({ type: this.endpoint, count: request.totalPages }).catch((e) => { });
+                    this.db.comments.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                        console.debug(`Added ${this.batchCount - e.failures.length} new Comments`);
+                    });
+                    const iterations = Array.apply(null, { length: (request.totalPages - 1) });
+                    iterations.forEach(() => __awaiter$5(this, void 0, void 0, function* () {
+                        yield this.api.some({ limit: this.batchCount, page: currentPage++ }).then((request) => {
+                            this.db.comments.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                                console.debug(`Added ${this.batchCount - e.failures.length} new Comments`);
+                            });
+                            return true;
+                        });
+                        this.compareState();
+                    }));
+                });
+            }
+        });
+    }
+    all() {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            return this.db.comments.toArray();
+        });
+    }
+    some(args = { limit: 20, offset: 0, page: undefined }) {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.db.comments.limit(args.limit).offset(args.offset).toArray();
+        });
+    }
+    getByID(id) {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            return this.db.comments.where("id").equals(id).first();
+        });
+    }
+    getBySlug(slug) {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            return this.db.comments.where("slug").equals(slug).first();
+        });
+    }
+}
+// CommentsAPI
+class CommentsAPI extends BaseAPI {
+    all() {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            return this.fetch(`?per_page=${this.batchCount}`);
+        });
+    }
+    count() {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            const result = yield this.fetch('?per_page=1');
+            return result.totalPages;
+        });
+    }
+    some(args = { limit: this.batchCount, offset: 0, page: undefined }) {
+        return __awaiter$5(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: this.batchCount, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.fetch(`?per_page=${args.limit}&offset=${args.offset}`);
+        });
+    }
+}
 
 var __awaiter$6 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -4868,13 +4988,313 @@ class MediaAPI extends BaseAPI {
     }
 }
 
+var __awaiter$7 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // Tags
+class Tags {
+    constructor(db, url = "/") {
+        this.endpoint = "/tags";
+        this.batchCount = 100;
+        this.db = db;
+        this.api = new TagsAPI(url, this.endpoint, this.batchCount);
+    }
+    compareState() {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            let follower = yield this.db.tags.count(result => {
+                return result;
+            });
+            let leader = yield this.api.count();
+            console.debug(this.endpoint, { "Follower": follower, "Leader": leader });
+            return follower === leader;
+        });
+    }
+    populate() {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            let currentPage = 1;
+            if (yield this.compareState()) {
+                console.debug("Leader and follower are in sync");
+            }
+            else {
+                console.debug("beginning sync...");
+                yield this.api.all().then((request) => {
+                    this.db.content.put({ type: this.endpoint, count: request.total }).catch((e) => { });
+                    this.db.tags.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                        console.debug(`Added ${this.batchCount - e.failures.length} new Tags`);
+                    });
+                    const iterations = Array.apply(null, { length: (request.totalTags - 1) });
+                    iterations.forEach(() => __awaiter$7(this, void 0, void 0, function* () {
+                        yield this.api.some({ limit: this.batchCount, page: currentPage++ }).then((request) => {
+                            this.db.tags.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                                console.debug(`Added ${this.batchCount - e.failures.length} new Tags`);
+                            });
+                            return true;
+                        });
+                        this.compareState();
+                    }));
+                });
+            }
+        });
+    }
+    all() {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            return this.db.tags.toArray();
+        });
+    }
+    some(args = { limit: 20, offset: 0, page: undefined }) {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.db.tags.limit(args.limit).offset(args.offset).toArray();
+        });
+    }
+    getByID(id) {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            return this.db.tags.where("id").equals(id).first();
+        });
+    }
+    getBySlug(slug) {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            return this.db.tags.where("slug").equals(slug).first();
+        });
+    }
+}
+// TagsAPI
+class TagsAPI extends BaseAPI {
+    all() {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            return this.fetch(`?per_page=${this.batchCount}`);
+        });
+    }
+    count() {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            const result = yield this.fetch('?per_page=1');
+            return result.total;
+        });
+    }
+    some(args = { limit: 20, offset: 0, page: undefined }) {
+        return __awaiter$7(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.fetch(`?per_page=${args.limit}&offset=${args.offset}`);
+        });
+    }
+}
 
+var __awaiter$8 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // Categories
+class Categories {
+    constructor(db, url = "/") {
+        this.endpoint = "/categories";
+        this.batchCount = 100;
+        this.db = db;
+        this.api = new CategoriesAPI(url, this.endpoint, this.batchCount);
+    }
+    compareState() {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            let follower = yield this.db.categories.count(result => {
+                return result;
+            });
+            let leader = yield this.api.count();
+            console.debug(this.endpoint, { "Follower": follower, "Leader": leader });
+            return follower === leader;
+        });
+    }
+    populate() {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            let currentPage = 1;
+            if (yield this.compareState()) {
+                console.debug("Leader and follower are in sync");
+            }
+            else {
+                console.debug("beginning sync...");
+                yield this.api.all().then((request) => {
+                    this.db.content.put({ type: this.endpoint, count: request.totalPages }).catch((e) => { });
+                    this.db.categories.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                        console.debug(`Added ${this.batchCount - e.failures.length} new Categories`);
+                    });
+                    const iterations = Array.apply(null, { length: (request.totalPages - 1) });
+                    iterations.forEach(() => __awaiter$8(this, void 0, void 0, function* () {
+                        yield this.api.some({ limit: this.batchCount, page: currentPage++ }).then((request) => {
+                            this.db.categories.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                                console.debug(`Added ${this.batchCount - e.failures.length} new Categories`);
+                            });
+                            return true;
+                        });
+                        this.compareState();
+                    }));
+                });
+            }
+        });
+    }
+    all() {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            return this.db.categories.toArray();
+        });
+    }
+    some(args = { limit: 20, offset: 0, page: undefined }) {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.db.categories.limit(args.limit).offset(args.offset).toArray();
+        });
+    }
+    getByID(id) {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            return this.db.categories.where("id").equals(id).first();
+        });
+    }
+    getBySlug(slug) {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            return this.db.categories.where("slug").equals(slug).first();
+        });
+    }
+}
+// CategoriesAPI
+class CategoriesAPI extends BaseAPI {
+    all() {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            return this.fetch(`?per_page=${this.batchCount}`);
+        });
+    }
+    count() {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            const result = yield this.fetch('?per_page=1');
+            return result.totalPages;
+        });
+    }
+    some(args = { limit: this.batchCount, offset: 0, page: undefined }) {
+        return __awaiter$8(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: this.batchCount, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.fetch(`?per_page=${args.limit}&offset=${args.offset}`);
+        });
+    }
+}
 
+var __awaiter$9 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // Users
+class Users {
+    constructor(db, url = "/") {
+        this.endpoint = "/users";
+        this.batchCount = 100;
+        this.db = db;
+        this.api = new UsersAPI(url, this.endpoint, this.batchCount);
+    }
+    compareState() {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            let follower = yield this.db.users.count(result => {
+                return result;
+            });
+            let leader = yield this.api.count();
+            console.debug(this.endpoint, { "Follower": follower, "Leader": leader });
+            return follower === leader;
+        });
+    }
+    populate() {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            let currentPage = 1;
+            if (yield this.compareState()) {
+                console.debug("Leader and follower are in sync");
+            }
+            else {
+                console.debug("beginning sync...");
+                yield this.api.all().then((request) => {
+                    this.db.content.put({ type: this.endpoint, count: request.total }).catch((e) => { });
+                    this.db.users.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                        console.debug(`Added ${this.batchCount - e.failures.length} new Users`);
+                    });
+                    const iterations = Array.apply(null, { length: (request.totalUsers - 1) });
+                    iterations.forEach(() => __awaiter$9(this, void 0, void 0, function* () {
+                        yield this.api.some({ limit: this.batchCount, page: currentPage++ }).then((request) => {
+                            this.db.users.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
+                                console.debug(`Added ${this.batchCount - e.failures.length} new Users`);
+                            });
+                            return true;
+                        });
+                        this.compareState();
+                    }));
+                });
+            }
+        });
+    }
+    all() {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            return this.db.users.toArray();
+        });
+    }
+    some(args = { limit: 20, offset: 0, page: undefined }) {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.db.users.limit(args.limit).offset(args.offset).toArray();
+        });
+    }
+    getByID(id) {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            return this.db.users.where("id").equals(id).first();
+        });
+    }
+    getBySlug(slug) {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            return this.db.users.where("slug").equals(slug).first();
+        });
+    }
+}
+// UsersAPI
+class UsersAPI extends BaseAPI {
+    all() {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            return this.fetch(`?per_page=${this.batchCount}`);
+        });
+    }
+    count() {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            const result = yield this.fetch('?per_page=1');
+            return result.total;
+        });
+    }
+    some(args = { limit: 20, offset: 0, page: undefined }) {
+        return __awaiter$9(this, void 0, void 0, function* () {
+            args = Object.assign({ limit: 20, offset: 0, page: undefined }, args);
+            if (args.page) {
+                args.offset = args.limit * args.page;
+            }
+            return this.fetch(`?per_page=${args.limit}&offset=${args.offset}`);
+        });
+    }
+}
 
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
@@ -4891,33 +5311,35 @@ class WordPress {
         this.url = url;
         this.posts = new Posts(this.db, this.url);
         this.pages = new Pages(this.db, this.url);
-        // types = new Types(this.db, this.url);
-        // comments = new Comments(this.db, this.url);
+        this.comments = new Comments(this.db, this.url);
         this.media = new Media(this.db, this.url);
-        // tags = new Tags(this.db, this.url);
-        // categories = new Categories(this.db, this.url);
-        // users = new Users(this.db, this.url);
+        this.tags = new Tags(this.db, this.url);
+        this.categories = new Categories(this.db, this.url);
+        this.users = new Users(this.db, this.url);
     }
     prepareDatabase() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield this.posts.populate();
-                yield this.pages.populate();
-                // await this.types.populate();
-                // await this.comments.populate();
-                yield this.media.populate();
-                // await this.tags.populate();
-                // await this.categories.populate();
-                // await this.users.populate();
-            }
-            catch (e) {
-                return false;
-            }
-            return true;
+        return __awaiter$1(this, void 0, void 0, function* () {
+            return yield Promise.all([
+                this.posts.populate(),
+                this.pages.populate(),
+                this.comments.populate(),
+                this.media.populate(),
+                this.tags.populate(),
+                this.categories.populate(),
+                this.users.populate()
+            ]);
         });
     }
 }
 
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 class WordpressApi {
     constructor() {
         this.baseUrl = window.location.origin;
@@ -4925,14 +5347,30 @@ class WordpressApi {
     }
     componentWillLoad() {
         this.wp = new WordPress(`${this.baseUrl}`);
-        this.wp.prepareDatabase().then((data) => {
-            console.log("Synced!", data);
-            this.ready = true;
-        }).catch((err) => {
-            console.log(err);
+        window["WordPress"] = this;
+        this.prepare().then((result) => {
+            this.ready = result;
+            console.log('Prepared, mounting');
+        });
+    }
+    api() {
+        return this.wp;
+    }
+    prepare() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.wp.prepareDatabase().then(() => {
+                return true;
+            }).catch((err) => {
+                return false;
+            });
         });
     }
     componentDidLoad() {
+    }
+    render() {
+        return (h("div", null, this.ready
+            ? h("slot", null)
+            : h("div", null)));
     }
 }
 
@@ -4947,7 +5385,9 @@ exports['wordpress-api'] = WordpressApi;
 
 /** wordpress-api: members **/
 [
+  [ "api", /** method **/ 6, /** do not observe attribute **/ 0, /** type any **/ 1 ],
   [ "baseUrl", /** prop **/ 1, /** observe attribute **/ 1, /** type string **/ 2 ],
+  [ "prepare", /** method **/ 6, /** do not observe attribute **/ 0, /** type any **/ 1 ],
   [ "ready", /** state **/ 5, /** do not observe attribute **/ 0, /** type any **/ 1 ],
   [ "wp", /** state **/ 5, /** do not observe attribute **/ 0, /** type any **/ 1 ]
 ],

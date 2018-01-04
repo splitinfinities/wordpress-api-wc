@@ -1,7 +1,7 @@
 {
   "name": "wordpress-api-wc",
   "version": "0.0.1",
-  "description": "Stencil Component Starter",
+  "description": "Provides <wordpress-api> and window.WordPress, a declarative way to interact with your WordPress site's api through IndexedDB. ",
   "main": "dist/wordpress-api.js",
   "types": "dist/types/index.d.ts",
   "collection": "dist/collection/collection-manifest.json",
@@ -19,9 +19,7 @@
   },
   "dependencies": {
     "@stencil/core": "next",
-    "dexie": "^2.0.1",
-    "wordpress-rest-api": "^0.8.0",
-    "wpapi": "^1.1.2"
+    "dexie": "^2.0.1"
   },
   "devDependencies": {
     "@stencil/dev-server": "latest",
@@ -33,7 +31,7 @@
     "type": "git",
     "url": "git+https://github.com/splitinfinities/wordpress-api-wc.git"
   },
-  "author": "Ionic Team",
+  "author": "William M. Riley",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/splitinfinities/wordpress-api-wc"

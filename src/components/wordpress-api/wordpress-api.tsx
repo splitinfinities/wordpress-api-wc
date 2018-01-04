@@ -1,8 +1,9 @@
-import { Component, Prop, State } from '@stencil/core';
+import { Component, Prop, State, Method } from '@stencil/core';
 import { WordPress } from './wordpress';
 
 @Component({
-  tag: 'wordpress-api'
+  tag: 'wordpress-api',
+  shadow: true
 })
 export class WordpressApi {
   @Prop() baseUrl: string = window.location.origin;
@@ -11,16 +12,41 @@ export class WordpressApi {
 
   componentWillLoad () {
     this.wp = new WordPress(`${this.baseUrl}`);
+    window["WordPress"] = this;
 
-    this.wp.prepareDatabase().then((data) => {
-        console.log("Synced!", data)
-        this.ready = true;
+    this.prepare().then((result) => {
+      this.ready = result;
+      console.log('Prepared, mounting')
+    });
+  }
+
+  @Method()
+  api() {
+    return this.wp;
+  }
+
+  @Method()
+  async prepare() {
+    return await this.wp.prepareDatabase().then(() => {
+       return true;
     }).catch((err) => {
-        console.log(err)
+      return false;
     });
   }
 
   componentDidLoad() {
 
+  }
+
+  render () {
+    return (
+      <div>
+        {
+          this.ready
+          ? <slot></slot>
+          : <div></div>
+        }
+      </div>
+    )
   }
 }

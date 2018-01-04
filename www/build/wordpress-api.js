@@ -50,4 +50,4 @@ function requiresSsrClient(doc) {
 
 init(win, doc, appNamespace, publicPath, appCore, appCoreSsr, appCorePolyfilled, components);
 
-})(window, document, "wordpress-api","/build/wordpress-api/","wordpress-api.core.js","wordpress-api.core.ssr.js","es5-build-disabled.js",[["wordpress-api",["wordpress-api",null],0,[["baseUrl",1,1,2],["ready",5],["wp",5]]]]);
+})(window, document, "wordpress-api","/build/wordpress-api/","wordpress-api.core.js","wordpress-api.core.ssr.js","es5-build-disabled.js",[["wordpress-api",["wordpress-api",null],0,[["api",6],["baseUrl",1,1,2],["prepare",6],["ready",5],["wp",5]],1,1]]);

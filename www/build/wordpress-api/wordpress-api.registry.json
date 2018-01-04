@@ -10,10 +10,18 @@
       0,
       [
         [
+          "api",
+          6
+        ],
+        [
           "baseUrl",
           1,
           1,
           2
+        ],
+        [
+          "prepare",
+          6
         ],
         [
           "ready",
@@ -23,7 +31,9 @@
           "wp",
           5
         ]
-      ]
+      ],
+      1,
+      1
     ]
   ],
   "core": "wordpress-api.core.js",

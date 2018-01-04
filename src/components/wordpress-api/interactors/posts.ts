@@ -1,4 +1,4 @@
-import { BaseAPI } from '../base-api';
+import { BaseAPI, WordPressApiError } from '../base-api';
 import Dexie from 'dexie';
 
 // Posts
@@ -71,11 +71,35 @@ export class Posts {
   }
 
   async getByID(id: number): Promise<any> {
-    return this.db.posts.where("id").equals(id).first();
+    console.debug('post in the db?')
+    let post = await this.db.posts.where("id").equals(id).first();
+
+    if (!post) {
+      console.debug('post on the app then?')
+      post = await this.api.fetch(`/${id}`);
+
+      if (post.data.status !== 200) {
+        return new WordPressApiError(post.data);
+      }
+    }
+
+    return post;
   }
 
   async getBySlug(slug: string): Promise<any> {
-    return this.db.posts.where("slug").equals(slug).first();
+    console.debug('post in the db?')
+    let post = await this.db.posts.where("id").equals(slug).first();
+
+    if (!post) {
+      console.debug('post on the app then?')
+      post = await this.api.fetch(`/${slug}`);
+
+      if (post.data.status !== 200) {
+        return new WordPressApiError(post.data);
+      }
+    }
+
+    return post;
   }
 }
 

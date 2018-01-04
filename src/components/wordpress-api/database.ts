@@ -41,7 +41,6 @@ export class Database extends Dexie {
   posts: Dexie.Table<WordpressApiPost,number>;
   content: Dexie.Table<WordpressApiContent,string>;
   pages: Dexie.Table<WordpressApiPage,number>;
-  types: Dexie.Table<WordpressApiAuthors,number>;
   comments: Dexie.Table<WordpressApiAuthors,number>;
   media: Dexie.Table<WordpressApiMedia,number>;
   tags: Dexie.Table<WordpressApiAuthors,number>;
@@ -55,7 +54,6 @@ export class Database extends Dexie {
       content: "type",
       posts: "id,slug",
       pages: "id,slug",
-      types: "id,slug",
       comments: "id,slug,post",
       media: "id,slug",
       tags: "id,slug",

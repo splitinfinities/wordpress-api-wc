@@ -20,31 +20,35 @@ importScripts('workbox-sw.prod.v2.1.2.js');
 const fileManifest = [
   {
     "url": "build/wordpress-api.js",
-    "revision": "81f2f17ba6966397dbc99e584e8776cf"
+    "revision": "adfc1e18228e3c6419ff6c0b83081121"
   },
   {
-    "url": "build/wordpress-api/wordpress-api.core.js",
-    "revision": "cdbbd3118d253d7a5f81bc49c8657138"
+    "url": "build/wordpress-api/dx9iagf6.js",
+    "revision": "01990b5bb1a88ac38be720f12c8de2e8"
   },
   {
-    "url": "build/wordpress-api/wordpress-api.core.pf.js",
-    "revision": "cf4fd170fae92c8ba34bf4588ef17079"
+    "url": "build/wordpress-api/wordpress-api.5t2ohrol.js",
+    "revision": "4155a56afbc89c4243e1cda171a3331f"
   },
   {
-    "url": "build/wordpress-api/wordpress-api.core.ssr.js",
-    "revision": "d132c123c14d09dbd9057dde87cbdf9d"
+    "url": "build/wordpress-api/wordpress-api.hbthyscr.js",
+    "revision": "d344fbe7ac9070870935b1337de61c35"
   },
   {
-    "url": "build/wordpress-api/wordpress-api.js",
-    "revision": "48acdfe16540c5bf8b655f358f3b10f2"
+    "url": "build/wordpress-api/wordpress-api.nviqp1nd.js",
+    "revision": "ba9abde0db598ad02595911126b45dd8"
   },
   {
     "url": "build/wordpress-api/wordpress-api.registry.json",
-    "revision": "180ce4dd21e104686faee871bea17f4d"
+    "revision": "ba5ef9deed0f8db88804b25e40f34c93"
+  },
+  {
+    "url": "build/wordpress-api/xyekswxr.js",
+    "revision": "7112cdfa8cd6d2fc4d1db43edb0b75c8"
   },
   {
     "url": "index.html",
-    "revision": "6abde8791aadf7e49e3be20110050b89"
+    "revision": "80bbdb375865903adc6d313ea0a56b0b"
   }
 ];
 

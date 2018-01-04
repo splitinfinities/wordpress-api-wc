@@ -3,6 +3,45 @@
 var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){publicPath=s.getAttribute('data-path');}
 (function(window, document, Context, appNamespace, publicPath) {
   'use strict';
+  function assignHostContentSlots(domApi, cmpMeta, elm, childNodes) {
+    // compiler has already figured out if this component has slots or not
+    // if the component doesn't even have slots then we'll skip over all of this code
+    if (cmpMeta.slotMeta) {
+      // looks like this component has slots
+      // so let's loop through each of the childNodes to the host element
+      // and pick out the ones that have a slot attribute
+      // if it doesn't have a slot attribute, than it's a default slot
+      elm.$defaultHolder || // create a comment to represent where the original
+      // content was first placed, which is useful later on
+      domApi.$insertBefore(elm, elm.$defaultHolder = domApi.$createComment(''), childNodes[0]);
+      let slotName;
+      let defaultSlot;
+      let namedSlots;
+      let i = 0;
+      for (;i < childNodes.length; i++) {
+        var childNode = childNodes[i];
+        if (1 === domApi.$nodeType(childNode) && null != (slotName = domApi.$getAttribute(childNode, 'slot'))) {
+          // is element node
+          // this element has a slot name attribute
+          // so this element will end up getting relocated into
+          // the component's named slot once it renders
+          namedSlots = namedSlots || {};
+          namedSlots[slotName] ? namedSlots[slotName].push(childNode) : namedSlots[slotName] = [ childNode ];
+        } else {
+          // this is a text node
+          // or it's an element node that doesn't have a slot attribute
+          // let's add this node to our collection for the default slot
+          defaultSlot ? defaultSlot.push(childNode) : defaultSlot = [ childNode ];
+        }
+      }
+      // keep a reference to all of the initial nodes
+      // found as immediate childNodes to the host element
+      elm._hostContentNodes = {
+        defaultSlot: defaultSlot,
+        namedSlots: namedSlots
+      };
+    }
+  }
   /**
      * SSR Attribute Names
      */
@@ -169,6 +208,8 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
         }
       }
     };
+    domApi.$attachShadow = ((elm, shadowRootInit) => elm.attachShadow(shadowRootInit));
+    domApi.$supportsShadowDom = !!domApi.$documentElement.attachShadow;
     domApi.$parentElement = ((elm, parentNode) => {
       // if the parent node is a document fragment (shadow root)
       // then use the "host" property on it
@@ -294,6 +335,35 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
       'function' === typeof vnode.vtag && (vnode = vnode.vtag(Object.assign({}, vnode.vattrs, {
         children: vnode.vchildren
       })));
+      if ('slot' === vnode.vtag && !useNativeShadowDom) {
+        if (hostContentNodes) {
+          scopeId && domApi.$setAttribute(parentElm, scopeId + '-slot', '');
+          // special case for manually relocating host content nodes
+          // to their new home in either a named slot or the default slot
+          let namedSlot = vnode.vattrs && vnode.vattrs.name;
+          let slotNodes;
+          // this vnode is a named slot
+          slotNodes = isDef(namedSlot) ? hostContentNodes.namedSlots && hostContentNodes.namedSlots[namedSlot] : hostContentNodes.defaultSlot;
+          if (isDef(slotNodes)) {
+            // the host element has some nodes that need to be moved around
+            // we have a slot for the user's vnode to go into
+            // while we're moving nodes around, temporarily disable
+            // the disconnectCallback from working
+            plt.tmpDisconnected = true;
+            for (;i < slotNodes.length; i++) {
+              // remove the host content node from it's original parent node
+              // then relocate the host content node to its new slotted home
+              domApi.$appendChild(parentElm, domApi.$removeChild(domApi.$parentNode(slotNodes[i]), slotNodes[i]));
+            }
+            // done moving nodes around
+            // allow the disconnect callback to work again
+            plt.tmpDisconnected = false;
+          }
+        }
+        // this was a slot node, we do not create slot elements, our work here is done
+        // no need to return any element to be added to the dom
+        return null;
+      }
       if (isDef(vnode.vtext)) {
         // create text node
         vnode.elm = domApi.$createTextNode(vnode.vtext);
@@ -451,7 +521,7 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
       }
     }
     // internal variables to be reused per patch() call
-    let isUpdate, hostContentNodes, scopeId;
+    let isUpdate, hostContentNodes, useNativeShadowDom, scopeId;
     return function patch(oldVNode, newVNode, isUpdatePatch, hostElementContentNodes, encapsulation, ssrPatchId) {
       // patchVNode() is synchronous
       // so it is safe to set these variables and internally
@@ -459,9 +529,18 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
       isUpdate = isUpdatePatch;
       hostContentNodes = hostElementContentNodes;
       scopeId = 2 === encapsulation || 1 === encapsulation && !domApi.$supportsShadowDom ? 'data-' + domApi.$tagName(oldVNode.elm) : null;
-      isUpdate || scopeId && // this host element should use scoped css
+      // use native shadow dom only if the component wants to use it
+      // and if this browser supports native shadow dom
+      useNativeShadowDom = 1 === encapsulation && domApi.$supportsShadowDom;
+      isUpdate || (useNativeShadowDom ? // this component SHOULD use native slot/shadow dom
+      // this browser DOES support native shadow dom
+      // and this is the first render
+      // let's create that shadow root
+      oldVNode.elm = domApi.$attachShadow(oldVNode.elm, {
+        mode: 'open'
+      }) : scopeId && // this host element should use scoped css
       // add the scope attribute to the host
-      domApi.$setAttribute(oldVNode.elm, scopeId + '-host', '');
+      domApi.$setAttribute(oldVNode.elm, scopeId + '-host', ''));
       // synchronous patch
       patchVNode(oldVNode, newVNode);
       // return our new vnode
@@ -851,6 +930,11 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
       // add getter/setter to the component instance
       // these will be pointed to the internal data set from the above checks
       definePropertyGetterSetter(instance, memberName, getComponentProp, setComponentProp);
+    } else if (6 === memberType) {
+      // @Method()
+      // add a property "value" on the host element
+      // which we'll bind to the instance's method
+      definePropertyValue(elm, memberName, instance[memberName].bind(instance));
     } else {}
   }
   function setValue(plt, elm, memberName, newVal) {
@@ -1162,6 +1246,8 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
       // because we're not passing an exact event name it'll
       // remove all of this element's event, which is good
       plt.domApi.$removeEventListener(elm);
+      elm._hostContentNodes && (// overreacting here just to reduce any memory leak issues
+      elm._hostContentNodes = elm._hostContentNodes.defaultSlot = elm._hostContentNodes.namedSlots = null);
       // call instance Did Unload and destroy instance stuff
       // if we've created an instance for this
       elm._instance && (elm._instance = elm._instance.__el = null);
@@ -1215,6 +1301,9 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
   }
   function componentOnReady(elm, cb) {
     elm._hasDestroyed || (elm._hasLoaded ? cb(elm) : (elm._onReadyCallbacks = elm._onReadyCallbacks || []).push(cb));
+  }
+  function useShadowDom(supportsNativeShadowDom, cmpMeta) {
+    return supportsNativeShadowDom && 1 === cmpMeta.encapsulation;
   }
   function useScopedCss(supportsNativeShadowDom, cmpMeta) {
     if (2 === cmpMeta.encapsulation) {
@@ -1279,6 +1368,11 @@ var s=document.querySelector("script[data-namespace='wordpress-api']");if(s){pub
       // first check if there's an attribute
       // next check the app's global
       elm.mode = domApi.$getAttribute(elm, 'mode') || Context.mode);
+      // host element has been connected to the DOM
+      domApi.$getAttribute(elm, SSR_VNODE_ID) || useShadowDom(domApi.$supportsShadowDom, cmpMeta) || // only required when we're NOT using native shadow dom (slot)
+      // this host element was NOT created with SSR
+      // let's pick out the inner content for slot projection
+      assignHostContentSlots(domApi, cmpMeta, elm, elm.childNodes);
       domApi.$supportsShadowDom || 1 !== cmpMeta.encapsulation || (// this component should use shadow dom
       // but this browser doesn't support it
       // so let's polyfill a few things for the user
