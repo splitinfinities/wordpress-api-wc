@@ -72,11 +72,13 @@ It should be absurdly easy to do a Single Page App with offline access. It shoul
 
 ## Events
 
-### `'DatabaseLoading'`
+### `wordpress-api tag emits 'mounting'`
 More to come
 
+### `wordpress-api tag emits 'loading'`
+More to come
 
-### `'DatabaseReady'`
+### `'wordpress-api tag emits 'ready'`
 More to come
 
 
