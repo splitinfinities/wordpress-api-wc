@@ -71,14 +71,15 @@ It should be absurdly easy to do a Single Page App with offline access. It shoul
 
 
 ## Events
+The <wordpress-api> element will emit these three events: 
 
-### `wordpress-api tag emits 'mounting'`
+### `'mounting'`
 More to come
 
-### `wordpress-api tag emits 'loading'`
+### `'loading'`
 More to come
 
-### `'wordpress-api tag emits 'ready'`
+### `'ready'`
 More to come
 
 
