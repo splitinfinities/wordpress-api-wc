@@ -92,11 +92,15 @@ export class Posts {
 
     if (!post) {
       console.debug('post on the app then?')
-      post = await this.api.fetch(`/${slug}`);
+      post = await this.api.fetch(`?slug=${slug}`);
 
-      if (post.data.status !== 200) {
+      console.log(post.data.status)
+
+      if (post.data.status) {
         return new WordPressApiError(post.data);
       }
+
+      post = post.data[0];
     }
 
     return post;

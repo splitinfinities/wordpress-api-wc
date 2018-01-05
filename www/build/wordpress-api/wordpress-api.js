@@ -4649,10 +4649,12 @@ class Posts {
             let post = yield this.db.posts.where("id").equals(slug).first();
             if (!post) {
                 console.debug('post on the app then?');
-                post = yield this.api.fetch(`/${slug}`);
-                if (post.data.status !== 200) {
+                post = yield this.api.fetch(`?slug=${slug}`);
+                console.log(post.data.status);
+                if (post.data.status) {
                     return new WordPressApiError(post.data);
                 }
+                post = post.data[0];
             }
             return post;
         });
