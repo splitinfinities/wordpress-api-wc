@@ -88,7 +88,7 @@ export class Posts {
 
   async getBySlug(slug: string): Promise<any> {
     console.debug('post in the db?')
-    let post = await this.db.posts.where("id").equals(slug).first();
+    let post = await this.db.posts.where("slug").equals(slug).first();
 
     if (!post) {
       console.debug('post on the app then?')
