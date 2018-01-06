@@ -70,7 +70,7 @@ export class Media {
       args.offset = args.limit * args.page;
     }
 
-    return this.db.media.limit(args.limit).offset(args.offset).toArray();
+    return this.db.media.offset(args.offset).limit(args.limit).toArray();
   }
 
   async getByID(id: number): Promise<any> {

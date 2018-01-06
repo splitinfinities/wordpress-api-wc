@@ -69,7 +69,7 @@ export class Categories {
       args.offset = args.limit * args.page;
     }
 
-    return this.db.categories.limit(args.limit).offset(args.offset).toArray();
+    return this.db.categories.offset(args.offset).limit(args.limit).toArray();
   }
 
   async getByID(id: number): Promise<any> {

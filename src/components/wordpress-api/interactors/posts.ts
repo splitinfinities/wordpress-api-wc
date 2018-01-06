@@ -69,7 +69,7 @@ export class Posts {
       args.offset = args.limit * args.page;
     }
 
-    return this.db.posts.limit(args.limit).offset(args.offset).toArray();
+    return this.db.posts.offset(args.offset).limit(args.limit).toArray();
   }
 
   async getByID(id: number): Promise<any> {

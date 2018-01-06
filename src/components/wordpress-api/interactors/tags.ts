@@ -69,7 +69,7 @@ export class Tags {
       args.offset = args.limit * args.page;
     }
 
-    return this.db.tags.limit(args.limit).offset(args.offset).toArray();
+    return this.db.tags.offset(args.offset).limit(args.limit).toArray();
   }
 
   async getByID(id: number): Promise<any> {
