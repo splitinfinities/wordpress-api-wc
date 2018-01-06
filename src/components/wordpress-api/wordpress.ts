@@ -5,7 +5,7 @@ import { Posts, Pages, Comments, Media, Tags, Categories, Users } from './intera
 // Declare Database
 //
 export class WordPress {
-  private db = new Database();
+  private db
   private url: string;
   private posts: Posts;
   private pages: Pages;
@@ -15,7 +15,8 @@ export class WordPress {
   private categories: Categories;
   private users: Users;
 
-  constructor(url: string) {
+  constructor(url: string, name: string) {
+    this.db = new Database(name);
     this.url = url;
     this.posts = new Posts(this.db, this.url);
     this.pages = new Pages(this.db, this.url);

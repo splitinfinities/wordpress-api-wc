@@ -14,11 +14,9 @@ export class Pages {
   }
 
   async compareState() {
-    let follower = await this.db.pages.count(result => {
-      return result;
-    });
-
+    let follower = await this.db.pages.count();
     let leader = await this.api.count();
+
     console.debug(this.endpoint, {"Follower": follower, "Leader": leader})
 
     return follower === leader;
@@ -54,6 +52,10 @@ export class Pages {
         });
       });
     }
+  }
+
+  async count(): Promise<any> {
+    return await this.db.pages.count();
   }
 
   async all(): Promise<any> {

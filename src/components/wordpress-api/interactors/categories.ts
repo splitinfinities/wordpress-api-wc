@@ -14,11 +14,9 @@ export class Categories {
   }
 
   async compareState() {
-    let follower = await this.db.categories.count(result => {
-      return result;
-    });
-
+    let follower = await this.db.categories.count();
     let leader = await this.api.count();
+
     console.debug(this.endpoint, {"Follower": follower, "Leader": leader})
 
     return follower === leader;
@@ -33,7 +31,7 @@ export class Categories {
       console.debug("beginning sync...")
 
       await this.api.all().then((request) => {
-        this.db.content.put({type: this.endpoint, count: request.totalPages}).catch((e) => {});
+        this.db.content.put({type: this.endpoint, count: request.total}).catch((e) => {});
 
         this.db.categories.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
           console.debug(`Added ${this.batchCount-e.failures.length} new Categories`);
@@ -54,6 +52,10 @@ export class Categories {
         });
       });
     }
+  }
+
+  async count(): Promise<any> {
+    return await this.db.categories.count();
   }
 
   async all(): Promise<any> {

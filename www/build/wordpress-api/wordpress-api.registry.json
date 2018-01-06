@@ -4,8 +4,8 @@
     [
       "wordpress-api",
       [
-        "iveq28ho",
-        "g1h2hc1f"
+        "jro0vb8h",
+        "wxy06drh"
       ],
       0,
       [
@@ -15,6 +15,12 @@
         ],
         [
           "baseUrl",
+          1,
+          1,
+          2
+        ],
+        [
+          "name",
           1,
           1,
           2

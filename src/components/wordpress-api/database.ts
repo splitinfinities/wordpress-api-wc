@@ -47,8 +47,8 @@ export class Database extends Dexie {
   categories: Dexie.Table<WordpressApiAuthors,number>;
   users: Dexie.Table<WordpressApiAuthors,number>;
 
-  constructor() {
-    super("WordpressDatabase");
+  constructor(name: string) {
+    super(name);
 
     this.version(this.dbVersion).stores({
       content: "type",

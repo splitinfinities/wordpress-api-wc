@@ -14,11 +14,9 @@ export class Tags {
   }
 
   async compareState() {
-    let follower = await this.db.tags.count(result => {
-      return result;
-    });
-
+    let follower = await this.db.tags.count();
     let leader = await this.api.count();
+
     console.debug(this.endpoint, {"Follower": follower, "Leader": leader})
 
     return follower === leader;
@@ -39,7 +37,7 @@ export class Tags {
           console.debug(`Added ${this.batchCount-e.failures.length} new Tags`);
         });
 
-        const iterations = Array.apply(null, { length: (request.totalTags - 1) });
+        const iterations = Array.apply(null, { length: (request.totalPages - 1) });
 
         iterations.forEach(async () => {
           await this.api.some({limit: this.batchCount, page: currentPage++}).then((request) => {
@@ -54,6 +52,10 @@ export class Tags {
         });
       });
     }
+  }
+
+  async count(): Promise<any> {
+    return await this.db.tags.count();
   }
 
   async all(): Promise<any> {

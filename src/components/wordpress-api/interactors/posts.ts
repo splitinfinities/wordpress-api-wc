@@ -14,11 +14,9 @@ export class Posts {
   }
 
   async compareState() {
-    let follower = await this.db.posts.count(result => {
-      return result;
-    });
-
+    let follower = await this.db.posts.count();
     let leader = await this.api.count();
+
     console.debug(this.endpoint, {"Follower": follower, "Leader": leader})
 
     return follower === leader;
@@ -54,6 +52,10 @@ export class Posts {
         });
       });
     }
+  }
+
+  async count(): Promise<any> {
+    return await this.db.posts.count();
   }
 
   async all(): Promise<any> {

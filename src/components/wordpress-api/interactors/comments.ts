@@ -14,11 +14,9 @@ export class Comments {
   }
 
   async compareState() {
-    let follower = await this.db.comments.count(result => {
-      return result;
-    });
-
+    let follower = await this.db.comments.count();
     let leader = await this.api.count();
+
     console.debug(this.endpoint, {"Follower": follower, "Leader": leader})
 
     return follower === leader;
@@ -33,7 +31,7 @@ export class Comments {
       console.debug("beginning sync...")
 
       await this.api.all().then((request) => {
-        this.db.content.put({type: this.endpoint, count: request.totalPages}).catch((e) => {});
+        this.db.content.put({type: this.endpoint, count: request.total}).catch((e) => {});
 
         this.db.comments.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
           console.debug(`Added ${this.batchCount-e.failures.length} new Comments`);
@@ -54,6 +52,10 @@ export class Comments {
         });
       });
     }
+  }
+
+  async count(): Promise<any> {
+    return await this.db.comments.count();
   }
 
   async all(): Promise<any> {

@@ -30,6 +30,7 @@ declare global {
   namespace JSXElements {
     export interface WordpressApiAttributes extends HTMLAttributes {
       baseUrl?: string;
+      name?: string;
     }
   }
 }

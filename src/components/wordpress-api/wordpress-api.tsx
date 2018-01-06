@@ -7,11 +7,12 @@ import { WordPress } from './wordpress';
 })
 export class WordpressApi {
   @Prop() baseUrl: string = window.location.origin;
+  @Prop() name: string = "WordPress";
   @State() wp;
   @State() ready = false;
 
   componentWillLoad () {
-    this.wp = new WordPress(`${this.baseUrl}`);
+    this.wp = new WordPress(this.baseUrl, this.name);
     window["WordPress"] = this;
 
     this.prepare().then((result) => {

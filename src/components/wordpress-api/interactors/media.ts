@@ -14,11 +14,9 @@ export class Media {
   }
 
   async compareState() {
-    let follower = await this.db.media.count(result => {
-      return result;
-    });
-
+    let follower = await this.db.media.count();
     let leader = await this.api.count();
+
     console.debug(this.endpoint, {"Follower": follower, "Leader": leader})
 
     return follower === leader;
@@ -33,6 +31,7 @@ export class Media {
       console.debug("beginning sync...")
 
       await this.api.all().then((request) => {
+        // FIXME: This is totalPages because of how the API is returning false information.
         this.db.content.put({type: this.endpoint, count: request.totalPages}).catch((e) => {});
 
         this.db.media.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
@@ -54,6 +53,10 @@ export class Media {
         });
       });
     }
+  }
+
+  async count(): Promise<any> {
+    return await this.db.media.count();
   }
 
   async all(): Promise<any> {
