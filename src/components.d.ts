@@ -31,6 +31,7 @@ declare global {
     export interface WordpressApiAttributes extends HTMLAttributes {
       baseUrl?: string;
       name?: string;
+      nonce?: string;
     }
   }
 }

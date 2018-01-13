@@ -20,15 +20,15 @@ importScripts('workbox-sw.prod.v2.1.2.js');
 const fileManifest = [
   {
     "url": "build/wordpress-api.js",
-    "revision": "fe49b769e5b96c8c176ddb1bd3c21ccc"
+    "revision": "282dab9659a57376ba732c3f7da31895"
   },
   {
-    "url": "build/wordpress-api/iumgzhhz.js",
-    "revision": "ee48471ae20a3e888f7752aa8aca3281"
+    "url": "build/wordpress-api/4yk4msdo.js",
+    "revision": "9d64a15822924cf9fb09898cd3e849e3"
   },
   {
-    "url": "build/wordpress-api/qbz2prdw.js",
-    "revision": "573903997962b18172588ed8196b6684"
+    "url": "build/wordpress-api/o2yv8ill.js",
+    "revision": "406e8ca6518706fb1da77e0fac2ef36d"
   },
   {
     "url": "build/wordpress-api/wordpress-api.5t2ohrol.js",
@@ -44,7 +44,7 @@ const fileManifest = [
   },
   {
     "url": "build/wordpress-api/wordpress-api.registry.json",
-    "revision": "49e61ab6020a9773beda869e9f100ca5"
+    "revision": "f866c9bd845443ee6a5655cb0ccef1ca"
   },
   {
     "url": "index.html",

@@ -5,9 +5,11 @@ import { WordPress } from './wordpress';
   tag: 'wordpress-api',
   shadow: true
 })
+
 export class WordpressApi {
   @Prop() baseUrl: string = window.location.origin;
   @Prop() name: string = "WordPress";
+  @Prop() nonce: string = "";
   @State() wp;
   @State() ready = false;
 
