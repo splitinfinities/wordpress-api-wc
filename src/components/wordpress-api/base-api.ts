@@ -93,24 +93,27 @@ export class BaseAPI {
   }
 
   async one (id: number): Promise<any> {
-    const item = await this.get_request({}, `/${id}`);
+    const response = await this.get_request({}, `/${id}`);
 
-    if (item.data.status !== 200) {
-      throw new WordPressApiError(item.data);
+    if (response.data.status !== 200) {
+      throw new WordPressApiError(response);
     }
 
-    return item;
+    return response;
   }
 
   /**
    * [create description]
    * @param {[type]} payload [description]
    */
-  async create (payload) {
+  async create (payload: object) {
     const response = await this.post_request(payload);
-    const data = await response.json();
 
-    return data;
+    if (response.data.status !== 200) {
+      throw new WordPressApiError(response);
+    }
+
+    return response;
   }
 
 }

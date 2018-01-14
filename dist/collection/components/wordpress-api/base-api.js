@@ -93,11 +93,11 @@ export class BaseAPI {
     }
     one(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const item = yield this.get_request({}, `/${id}`);
-            if (item.data.status !== 200) {
-                throw new WordPressApiError(item.data);
+            const response = yield this.get_request({}, `/${id}`);
+            if (response.data.status !== 200) {
+                throw new WordPressApiError(response);
             }
-            return item;
+            return response;
         });
     }
     /**
@@ -107,8 +107,10 @@ export class BaseAPI {
     create(payload) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield this.post_request(payload);
-            const data = yield response.json();
-            return data;
+            if (response.data.status !== 200) {
+                throw new WordPressApiError(response);
+            }
+            return response;
         });
     }
 }
