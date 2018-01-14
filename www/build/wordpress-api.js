@@ -1,2 +1,53 @@
 /*! Built with http://stenciljs.com */
-!function(t,e,r,n,s,i,o,a){function p(t){return"noModule"in t}function c(t){return t.customElements}function u(t){return t.fetch}function d(t){return t.CSS&&t.CSS.supports&&t.CSS.supports("color","var(--c)")}function l(t){return t.documentElement.hasAttribute("data-ssr")}!function(t,e,r,n,s,i,o,a,h,f){(t[r]=t[r]||{}).components=a,(f=a.filter(function(t){return t[2]}).map(function(t){return t[0]})).length&&((h=e.createElement("style")).innerHTML=f.join()+"{visibility:hidden}",h.setAttribute("data-visibility",""),e.head.insertBefore(h,e.head.firstChild)),r=r.toLowerCase(),(h=e.scripts[e.scripts.length-1])&&h.src&&(n=(f=h.src.split("/").slice(0,-1)).join("/")+(f.length?"/":"")+r+"/"),(h=e.createElement("script")).src=n+(p(h)&&c(t)&&u(t)&&d(t)?l(e)?i:s:o),h.setAttribute("data-path",n),h.setAttribute("data-namespace",r),e.head.appendChild(h)}(window,document,"wordpress-api","/build/wordpress-api/","wordpress-api.nviqp1nd.js","wordpress-api.5t2ohrol.js","wordpress-api.hbthyscr.js",[["wordpress-api",["4yk4msdo","o2yv8ill"],0,[["api",6],["baseUrl",1,1,2],["name",1,1,2],["nonce",1,1,2],["prepare",6],["ready",5],["wp",5]],1,1]])}();
+(function(win, doc, appNamespace, publicPath, appCore, appCoreSsr, appCorePolyfilled, components) {
+
+function init(win, doc, appNamespace, publicPath, appCore, appCoreSsr, appCorePolyfilled, components, x, y) {
+    // create global namespace if it doesn't already exist
+    (win[appNamespace] = win[appNamespace] || {}).components = components;
+    y = components.filter(function (c) { return c[2]; }).map(function (c) { return c[0]; });
+    if (y.length) {
+        // auto hide components until they been fully hydrated
+        // reusing the "x" and "i" variables from the args for funzies
+        x = doc.createElement('style');
+        x.innerHTML = y.join() + '{visibility:hidden}';
+        x.setAttribute('data-visibility', '');
+        doc.head.insertBefore(x, doc.head.firstChild);
+    }
+    // get this current script
+    // script tag cannot use "async" attribute
+    appNamespace = appNamespace.toLowerCase();
+    x = doc.scripts[doc.scripts.length - 1];
+    if (x && x.src) {
+        y = x.src.split('/').slice(0, -1);
+        publicPath = (y.join('/')) + (y.length ? '/' : '') + appNamespace + '/';
+    }
+    // request the core this browser needs
+    // test for native support of custom elements and fetch
+    // if either of those are not supported, then use the core w/ polyfills
+    // also check if the page was build with ssr or not
+    x = doc.createElement('script');
+    x.src = publicPath + ((supportsCustomElements(x) && supportsEsModules(win) && supportsFetch(win) && supportsCssVariables(win)) ? (requiresSsrClient(doc) ? appCoreSsr : appCore) : appCorePolyfilled);
+    x.setAttribute('data-path', publicPath);
+    x.setAttribute('data-namespace', appNamespace);
+    doc.head.appendChild(x);
+}
+function supportsCustomElements(scriptElm) {
+    return 'noModule' in scriptElm;
+}
+function supportsEsModules(win) {
+    return win.customElements;
+}
+function supportsFetch(win) {
+    return win.fetch;
+}
+function supportsCssVariables(win) {
+    return (win.CSS && win.CSS.supports && win.CSS.supports('color', 'var(--c)'));
+}
+function requiresSsrClient(doc) {
+    return doc.documentElement.hasAttribute('data-ssr');
+}
+
+
+init(win, doc, appNamespace, publicPath, appCore, appCoreSsr, appCorePolyfilled, components);
+
+})(window, document, "wordpress-api","/build/wordpress-api/","wordpress-api.core.js","wordpress-api.core.ssr.js","es5-build-disabled.js",[["wordpress-api",["wordpress-api",null],0,[["api",6],["baseUrl",1,1,2],["name",1,1,2],["nonce",1,1,2],["prepare",6],["ready",5],["wp",5]],1,1]]);
