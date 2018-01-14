@@ -1,0 +1,54 @@
+{
+  "components": [
+    {
+      "tag": "wordpress-api",
+      "componentClass": "WordpressApi",
+      "componentPath": "components/wordpress-api/wordpress-api.js",
+      "styles": {},
+      "props": [
+        {
+          "name": "baseUrl",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "nonce",
+          "type": "string"
+        }
+      ],
+      "states": [
+        {
+          "name": "ready"
+        },
+        {
+          "name": "wp"
+        }
+      ],
+      "methods": [
+        {
+          "name": "api"
+        },
+        {
+          "name": "prepare"
+        }
+      ],
+      "slot": "hasSlots",
+      "shadow": true
+    }
+  ],
+  "bundles": [
+    {
+      "components": [
+        "wordpress-api"
+      ]
+    }
+  ],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "0.1.1-0",
+    "typescriptVersion": "2.6.2"
+  }
+}

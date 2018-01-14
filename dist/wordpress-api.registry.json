@@ -1,0 +1,54 @@
+{
+  "namespace": "wordpress-api",
+  "components": [
+    [
+      "wordpress-api",
+      [
+        "swpvjd9l",
+        "pbvmnpks"
+      ],
+      0,
+      [
+        [
+          "api",
+          6
+        ],
+        [
+          "baseUrl",
+          1,
+          1,
+          2
+        ],
+        [
+          "name",
+          1,
+          1,
+          2
+        ],
+        [
+          "nonce",
+          1,
+          1,
+          2
+        ],
+        [
+          "prepare",
+          6
+        ],
+        [
+          "ready",
+          5
+        ],
+        [
+          "wp",
+          5
+        ]
+      ],
+      1,
+      1
+    ]
+  ],
+  "core": "wordpress-api.nviqp1nd.js",
+  "coreSsr": "wordpress-api.5t2ohrol.js",
+  "corePolyfilled": "wordpress-api.hbthyscr.js"
+}
