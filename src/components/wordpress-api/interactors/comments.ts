@@ -79,6 +79,14 @@ export class Comments {
   async getBySlug(slug: string): Promise<any> {
     return this.db.comments.where("slug").equals(slug).first();
   }
+
+  async create(payload: object) {
+    const result = await this.api.post(payload);
+
+    // await this.db.comments.put(result);
+
+    return result;
+  }
 }
 
 // CommentsAPI
@@ -100,6 +108,25 @@ class CommentsAPI extends BaseAPI {
     }
 
     return this.fetch(`?per_page=${args.limit}&offset=${args.offset}`);
+  }
+
+  async post(payload) {
+    const urlParameters = Object.keys(payload).map(i => `${i}=${payload[i]}`).join('&')
+
+    const config: any = {
+      method: 'POST',
+      body: urlParameters,
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-WP-Nonce': document.querySelector('wordpress-api').nonce
+      }
+    };
+
+    const response = await fetch(this.url + this.path + this.endpoint, config);
+    const data = await response.json();
+
+    return data;
   }
 }
 

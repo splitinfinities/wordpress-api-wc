@@ -1,7 +1,7 @@
 export class BaseAPI {
-  private url;
-  private path = "/wp-json/wp/v2";
-  private endpoint;
+  url;
+  path = "/wp-json/wp/v2";
+  endpoint;
   batchCount;
 
   constructor(url: string, endpoint: string, batchCount: number = 100) {

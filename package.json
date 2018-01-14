@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@stencil/core": "next",
-    "dexie": "^2.0.1"
+    "dexie": "^2.0.1",
+    "request": "^2.83.0"
   },
   "devDependencies": {
     "@stencil/dev-server": "latest",
