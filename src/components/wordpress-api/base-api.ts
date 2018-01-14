@@ -109,7 +109,7 @@ export class BaseAPI {
   async create (payload: object) {
     const response = await this.post_request(payload);
 
-    if (response.data.status !== 200) {
+    if (response.data && response.data.status !== 200) {
       throw new WordPressApiError(response);
     }
 
