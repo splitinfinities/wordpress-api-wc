@@ -11,7 +11,7 @@ import { BaseInteractor } from '../base-interactor';
 import Dexie from 'dexie';
 // Media
 export class Media extends BaseInteractor {
-    constructor(db, url = "/") {
+    constructor(db, url = "/", nonce) {
         super(db, db.media);
         this.endpoint = "/media";
         this.singular = "Media";
@@ -19,7 +19,8 @@ export class Media extends BaseInteractor {
         this.api = new MediaAPI({
             url: url,
             endpoint: this.endpoint,
-            batchCount: this.batchCount
+            batchCount: this.batchCount,
+            nonce
         });
     }
     populate() {

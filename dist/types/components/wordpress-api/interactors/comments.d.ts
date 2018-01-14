@@ -3,5 +3,5 @@ export declare class Comments extends BaseInteractor {
     endpoint: string;
     singular: string;
     plural: string;
-    constructor(db: any, url?: string);
+    constructor(db: any, url: string, nonce: string);
 }

@@ -7,12 +7,13 @@ export class Pages extends BaseInteractor {
   singular = "Page";
   plural = "Pages";
 
-  constructor(db: any, url: string = "/") {
+  constructor(db: any, url: string = "/", nonce: string) {
     super(db, db.pages)
     this.api = new PagesAPI({
       url: url,
       endpoint: this.endpoint,
-      batchCount: this.batchCount
+      batchCount: this.batchCount,
+      nonce
     });
   }
 }

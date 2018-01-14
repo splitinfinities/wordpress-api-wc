@@ -8,12 +8,13 @@ export class Media extends BaseInteractor {
   singular = "Media";
   plural = "Media";
 
-  constructor(db: any, url: string = "/") {
+  constructor(db: any, url: string = "/", nonce: string) {
     super(db, db.media)
     this.api = new MediaAPI({
       url: url,
       endpoint: this.endpoint,
-      batchCount: this.batchCount
+      batchCount: this.batchCount,
+      nonce
     });
   }
 

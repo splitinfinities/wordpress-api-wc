@@ -12,16 +12,17 @@ import { Posts, Pages, Comments, Media, Tags, Categories, Users } from './intera
 // Declare Database
 //
 export class WordPress {
-    constructor(url, name) {
+    constructor(url, name, nonce) {
         this.db = new Database(name);
         this.url = url;
-        this.posts = new Posts(this.db, this.url);
-        this.pages = new Pages(this.db, this.url);
-        this.comments = new Comments(this.db, this.url);
-        this.media = new Media(this.db, this.url);
-        this.tags = new Tags(this.db, this.url);
-        this.categories = new Categories(this.db, this.url);
-        this.users = new Users(this.db, this.url);
+        this.nonce = nonce;
+        this.posts = new Posts(this.db, this.url, this.nonce);
+        this.pages = new Pages(this.db, this.url, this.nonce);
+        this.comments = new Comments(this.db, this.url, this.nonce);
+        this.media = new Media(this.db, this.url, this.nonce);
+        this.tags = new Tags(this.db, this.url, this.nonce);
+        this.categories = new Categories(this.db, this.url, this.nonce);
+        this.users = new Users(this.db, this.url, this.nonce);
     }
     prepareDatabase() {
         return __awaiter(this, void 0, void 0, function* () {

@@ -4,20 +4,26 @@
     [
       "wordpress-api",
       [
-        "gjxrnxxv",
-        "ks1jc5v3"
+        "vp8aa3uh",
+        "3enz8ypt"
       ],
       0,
       [
         [
           "api",
-          6
+          2,
+          1,
+          1
         ],
         [
           "baseUrl",
           1,
           1,
           2
+        ],
+        [
+          "cookie",
+          5
         ],
         [
           "name",
@@ -38,6 +44,10 @@
         [
           "ready",
           5
+        ],
+        [
+          "signedIn",
+          6
         ],
         [
           "wp",

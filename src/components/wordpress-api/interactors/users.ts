@@ -7,12 +7,13 @@ export class Users extends BaseInteractor {
   singular = "Post";
   plural = "Posts";
 
-  constructor(db: any, url: string = "/") {
+  constructor(db: any, url: string = "/", nonce: string) {
     super(db, db.users)
     this.api = new UsersAPI({
       url: url,
       endpoint: this.endpoint,
-      batchCount: this.batchCount
+      batchCount: this.batchCount,
+      nonce
     });
   }
 }

@@ -7,12 +7,13 @@ export class Categories extends BaseInteractor {
   singular = "Categories";
   plural = "Category";
 
-  constructor(db: any, url: string = "/") {
+  constructor(db: any, url: string = "/", nonce: string) {
     super(db, db.categories)
     this.api = new CategoriesAPI({
       url: url,
       endpoint: this.endpoint,
-      batchCount: this.batchCount
+      batchCount: this.batchCount,
+      nonce
     });
   }
 }

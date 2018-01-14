@@ -2,7 +2,7 @@ import { BaseAPI } from '../base-api';
 import { BaseInteractor } from '../base-interactor';
 // Pages
 export class Pages extends BaseInteractor {
-    constructor(db, url = "/") {
+    constructor(db, url = "/", nonce) {
         super(db, db.pages);
         this.endpoint = "/pages";
         this.singular = "Page";
@@ -10,7 +10,8 @@ export class Pages extends BaseInteractor {
         this.api = new PagesAPI({
             url: url,
             endpoint: this.endpoint,
-            batchCount: this.batchCount
+            batchCount: this.batchCount,
+            nonce
         });
     }
 }

@@ -7,12 +7,13 @@ export class Comments extends BaseInteractor {
   singular = "Comments";
   plural = "Comment";
 
-  constructor(db: any, url: string = "/") {
+  constructor(db: any, url: string = "/", nonce: string) {
     super(db, db.comments)
     this.api = new CommentsAPI({
       url: url,
       endpoint: this.endpoint,
-      batchCount: this.batchCount
+      batchCount: this.batchCount,
+      nonce
     });
   }
 }

@@ -7,6 +7,11 @@
       "styles": {},
       "props": [
         {
+          "name": "api",
+          "type": "any",
+          "mutable": true
+        },
+        {
           "name": "baseUrl",
           "type": "string"
         },
@@ -21,6 +26,9 @@
       ],
       "states": [
         {
+          "name": "cookie"
+        },
+        {
           "name": "ready"
         },
         {
@@ -29,10 +37,10 @@
       ],
       "methods": [
         {
-          "name": "api"
+          "name": "prepare"
         },
         {
-          "name": "prepare"
+          "name": "signedIn"
         }
       ],
       "slot": "hasSlots",

@@ -11,19 +11,20 @@ export class WordpressApi {
     constructor() {
         this.baseUrl = window.location.origin;
         this.name = "WordPress";
-        this.nonce = "";
         this.ready = false;
+        this.cookie = false;
     }
     componentWillLoad() {
-        this.wp = new WordPress(this.baseUrl, this.name);
+        this.wp = new WordPress(this.baseUrl, this.name, this.nonce);
+        this.api = this.wp;
         window["WordPress"] = this;
         this.prepare().then((result) => {
             this.ready = result;
             console.log('Prepared, mounting');
         });
     }
-    api() {
-        return this.wp;
+    signedIn() {
+        return this.cookie;
     }
     prepare() {
         return __awaiter(this, void 0, void 0, function* () {

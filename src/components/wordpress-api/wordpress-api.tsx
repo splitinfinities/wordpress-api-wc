@@ -9,12 +9,16 @@ import { WordPress } from './wordpress';
 export class WordpressApi {
   @Prop() baseUrl: string = window.location.origin;
   @Prop() name: string = "WordPress";
-  @Prop() nonce: string = "";
+  @Prop() nonce: string;
+  @Prop({mutable: true}) api: any;
   @State() wp;
   @State() ready = false;
+  @State() cookie = false;
 
   componentWillLoad () {
-    this.wp = new WordPress(this.baseUrl, this.name);
+    this.wp = new WordPress(this.baseUrl, this.name, this.nonce);
+    this.api = this.wp;
+
     window["WordPress"] = this;
 
     this.prepare().then((result) => {
@@ -24,8 +28,8 @@ export class WordpressApi {
   }
 
   @Method()
-  api() {
-    return this.wp;
+  signedIn() {
+    return this.cookie;
   }
 
   @Method()
