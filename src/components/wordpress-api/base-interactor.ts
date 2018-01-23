@@ -106,6 +106,18 @@ export class BaseInteractor {
   }
 
   /**
+   * Returns a post by the ID. Hits the follower first.
+   * @param  {number}       id The id of the post to return.
+   * @return {Promise<object>}    Returns the object from the database.
+   */
+  async hasNewVersion(id: number): Promise<boolean> {
+    let leader = await this.api.one(id);
+    leader = leader.data;
+    const follower = await this.subject.where("id").equals(id).first();
+    return follower.modified !== leader.modified
+  }
+
+  /**
    * Returns a post by the slug. Hits the follower first.
    * @param  {string}       slug The slug of the post to return.
    * @return {Promise<object>}    Returns the object from the database.
@@ -150,6 +162,34 @@ export class BaseInteractor {
 
     return args
   }
+
+
+  isEquivalent (a: Object, b: Object): boolean {
+      // Create arrays of property names
+      var aProps = Object.getOwnPropertyNames(a);
+      var bProps = Object.getOwnPropertyNames(b);
+
+      // If number of properties is different,
+      // objects are not equivalent
+      if (aProps.length != bProps.length) {
+          return false;
+      }
+
+      for (var i = 0; i < aProps.length; i++) {
+          var propName = aProps[i];
+
+          // If values of same property are not equal,
+          // objects are not equivalent
+          if (a[propName] !== b[propName]) {
+              return false;
+          }
+      }
+
+      // If we made it this far, objects
+      // are considered equivalent
+      return true;
+  }
+
 }
 
 declare interface someRequestArguments {
@@ -157,3 +197,4 @@ declare interface someRequestArguments {
   offset?: number;
   page?: number;
 }
+

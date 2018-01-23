@@ -94,7 +94,7 @@ export class BaseAPI {
     one(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = yield this.get_request({}, `/${id}`);
-            if (response.data.status !== 200) {
+            if (response.data.status === 200) {
                 throw new WordPressApiError(response);
             }
             return response;

@@ -104,6 +104,19 @@ export class BaseInteractor {
         });
     }
     /**
+     * Returns a post by the ID. Hits the follower first.
+     * @param  {number}       id The id of the post to return.
+     * @return {Promise<object>}    Returns the object from the database.
+     */
+    hasNewVersion(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let leader = yield this.api.one(id);
+            leader = leader.data;
+            const follower = yield this.subject.where("id").equals(id).first();
+            return follower.modified !== leader.modified;
+        });
+    }
+    /**
      * Returns a post by the slug. Hits the follower first.
      * @param  {string}       slug The slug of the post to return.
      * @return {Promise<object>}    Returns the object from the database.
@@ -143,5 +156,26 @@ export class BaseInteractor {
             args.offset = args.limit * args.page;
         }
         return args;
+    }
+    isEquivalent(a, b) {
+        // Create arrays of property names
+        var aProps = Object.getOwnPropertyNames(a);
+        var bProps = Object.getOwnPropertyNames(b);
+        // If number of properties is different,
+        // objects are not equivalent
+        if (aProps.length != bProps.length) {
+            return false;
+        }
+        for (var i = 0; i < aProps.length; i++) {
+            var propName = aProps[i];
+            // If values of same property are not equal,
+            // objects are not equivalent
+            if (a[propName] !== b[propName]) {
+                return false;
+            }
+        }
+        // If we made it this far, objects
+        // are considered equivalent
+        return true;
     }
 }

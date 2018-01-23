@@ -95,7 +95,7 @@ export class BaseAPI {
   async one (id: number): Promise<any> {
     const response = await this.get_request({}, `/${id}`);
 
-    if (response.data.status !== 200) {
+    if (response.data.status === 200) {
       throw new WordPressApiError(response);
     }
 
