@@ -1,6 +1,6 @@
 {
   "name": "wordpress-api-wc",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Provides <wordpress-api> and window.WordPress, a declarative way to interact with your WordPress site's api through IndexedDB. ",
   "main": "dist/wordpress-api.js",
   "types": "dist/types/index.d.ts",
