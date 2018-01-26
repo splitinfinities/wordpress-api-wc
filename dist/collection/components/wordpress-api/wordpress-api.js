@@ -42,4 +42,7 @@ export class WordpressApi {
             ? h("slot", null)
             : h("div", null)));
     }
+    static get is() { return "wordpress-api"; }
+    static get encapsulation() { return "shadow"; }
+    static get properties() { return { "api": { "type": "Any", "attr": "api", "mutable": true }, "baseUrl": { "type": String, "attr": "base-url" }, "cookie": { "state": true }, "name": { "type": String, "attr": "name" }, "nonce": { "type": String, "attr": "nonce" }, "prepare": { "method": true }, "ready": { "state": true }, "signedIn": { "method": true }, "wp": { "state": true } }; }
 }

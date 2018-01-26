@@ -4,3 +4,37 @@
  * and imports for stencil collections that might be configured in your stencil.config.js file
  */
 
+
+import {
+  WordpressApi as WordpressApi
+} from './components/wordpress-api/wordpress-api';
+
+declare global {
+  interface HTMLWordpressApiElement extends WordpressApi, HTMLElement {
+  }
+  var HTMLWordpressApiElement: {
+    prototype: HTMLWordpressApiElement;
+    new (): HTMLWordpressApiElement;
+  };
+  interface HTMLElementTagNameMap {
+    "wordpress-api": HTMLWordpressApiElement;
+  }
+  interface ElementTagNameMap {
+    "wordpress-api": HTMLWordpressApiElement;
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "wordpress-api": JSXElements.WordpressApiAttributes;
+    }
+  }
+  namespace JSXElements {
+    export interface WordpressApiAttributes extends HTMLAttributes {
+      api?: any;
+      baseUrl?: string;
+      name?: string;
+      nonce?: string;
+    }
+  }
+}
+
+declare global { namespace JSX { interface StencilJSX {} } }

@@ -8,20 +8,20 @@
       "props": [
         {
           "name": "api",
-          "type": "any",
+          "type": "Any",
           "mutable": true
         },
         {
           "name": "baseUrl",
-          "type": "string"
+          "type": "String"
         },
         {
           "name": "name",
-          "type": "string"
+          "type": "String"
         },
         {
           "name": "nonce",
-          "type": "string"
+          "type": "String"
         }
       ],
       "states": [
@@ -43,7 +43,6 @@
           "name": "signedIn"
         }
       ],
-      "slot": "hasSlots",
       "shadow": true
     }
   ],
@@ -56,7 +55,7 @@
   ],
   "compiler": {
     "name": "@stencil/core",
-    "version": "0.1.1-0",
+    "version": "0.2.3",
     "typescriptVersion": "2.6.2"
   }
 }
