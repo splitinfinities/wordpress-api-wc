@@ -29,7 +29,6 @@ export class WordPress {
     this.users = new Users(this.db, this.url, this.nonce);
   }
 
-
   async prepareDatabase() {
     return await Promise.all([
       this.posts.populate(),

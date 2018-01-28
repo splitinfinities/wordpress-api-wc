@@ -166,6 +166,92 @@ export class BaseInteractor {
   }
 
   /**
+   * Returns a post by the ID. Hits the follower first.
+   * @param  {number}       id The id of the post to return.
+   * @param  {number}       skipIndexedDB Force a request to the API
+   * @return {Promise<object>}    Returns the object from the database.
+   */
+  async getByIDAndPopulate(id: number, skipIndexedDB: boolean = false): Promise<object> {
+    let item = await this.getByID(id, skipIndexedDB);
+    item = this.makeRich(item, skipIndexedDB);
+    return item;
+  }
+
+  /**
+   * Returns a post by the ID. Hits the follower first.
+   * @param  {string}       id The id of the post to return.
+   * @param  {number}       skipIndexedDB Force a request to the API
+   * @return {Promise<object>}    Returns the object from the database.
+   */
+  async getBySlugAndPopulate(slug: string, skipIndexedDB: boolean = false): Promise<object> {
+    let item = await this.getBySlug(slug, skipIndexedDB);
+    item = this.makeRich(item, skipIndexedDB);
+    return item;
+  }
+
+  /**
+   * Populates an item with lots of rich content
+   * @param  {number}       id The id of the post to return.
+   * @param  {number}       skipIndexedDB Force a request to the API
+   * @return {Promise<object>}    Returns the object from the database.
+   */
+  async makeRich(item: any, skipIndexedDB: boolean = false) {
+    let api = window["WordPress"].api;
+
+    // @ts-ignore
+    if (item.featured_media && item.featured_media !== 0) {
+      // @ts-ignore
+      item.featured_media = await api.media.getByID(item.featured_media, skipIndexedDB);
+    }
+
+    if (item.author) {
+      // @ts-ignore
+      item.author = await api.users.getByID(item.author, skipIndexedDB);
+    }
+
+    if (item.categories) {
+      let categories = {};
+
+      // @ts-ignore
+      for (let category of item.categories) {
+        categories[category] = await api.categories.getByID(category, skipIndexedDB);
+      }
+
+      // @ts-ignore
+      item.categories = categories;
+    }
+
+    if (item.post) {
+      const post_id = item.post;
+      let post;
+
+      post = await api.posts.getByIDAndPopulate(post_id, skipIndexedDB);
+
+      if (post.data.status) {
+        post = await api.pages.getByIDAndPopulate(post_id, skipIndexedDB);
+      }
+
+       item.post = post;
+    }
+
+    if (item.parent && item.parent !== 0) {
+      const post_id = item.post;
+      let post;
+
+      post = await api.posts.getByIDAndPopulate(post_id, skipIndexedDB);
+
+      if (post.data.status) {
+        post = await api.pages.getByIDAndPopulate(post_id, skipIndexedDB);
+      }
+
+       item.parent = post;
+    }
+
+    return item;
+  }
+
+
+  /**
    * transform an object and turn it into a string
    * @param {someRequestArguments} args An object with the arguments to pass to the API.
    */

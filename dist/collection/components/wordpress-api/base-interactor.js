@@ -158,6 +158,80 @@ export class BaseInteractor {
         });
     }
     /**
+     * Returns a post by the ID. Hits the follower first.
+     * @param  {number}       id The id of the post to return.
+     * @param  {number}       skipIndexedDB Force a request to the API
+     * @return {Promise<object>}    Returns the object from the database.
+     */
+    getByIDAndPopulate(id, skipIndexedDB = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let item = yield this.getByID(id, skipIndexedDB);
+            item = this.makeRich(item, skipIndexedDB);
+            return item;
+        });
+    }
+    /**
+     * Returns a post by the ID. Hits the follower first.
+     * @param  {string}       id The id of the post to return.
+     * @param  {number}       skipIndexedDB Force a request to the API
+     * @return {Promise<object>}    Returns the object from the database.
+     */
+    getBySlugAndPopulate(slug, skipIndexedDB = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let item = yield this.getBySlug(slug, skipIndexedDB);
+            item = this.makeRich(item, skipIndexedDB);
+            return item;
+        });
+    }
+    /**
+     * Populates an item with lots of rich content
+     * @param  {number}       id The id of the post to return.
+     * @param  {number}       skipIndexedDB Force a request to the API
+     * @return {Promise<object>}    Returns the object from the database.
+     */
+    makeRich(item, skipIndexedDB = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let api = window["WordPress"].api;
+            // @ts-ignore
+            if (item.featured_media && item.featured_media !== 0) {
+                // @ts-ignore
+                item.featured_media = yield api.media.getByID(item.featured_media, skipIndexedDB);
+            }
+            if (item.author) {
+                // @ts-ignore
+                item.author = yield api.users.getByID(item.author, skipIndexedDB);
+            }
+            if (item.categories) {
+                let categories = {};
+                // @ts-ignore
+                for (let category of item.categories) {
+                    categories[category] = yield api.categories.getByID(category, skipIndexedDB);
+                }
+                // @ts-ignore
+                item.categories = categories;
+            }
+            if (item.post) {
+                const post_id = item.post;
+                let post;
+                post = yield api.posts.getByIDAndPopulate(post_id, skipIndexedDB);
+                if (post.data.status) {
+                    post = yield api.pages.getByIDAndPopulate(post_id, skipIndexedDB);
+                }
+                item.post = post;
+            }
+            if (item.parent && item.parent !== 0) {
+                const post_id = item.post;
+                let post;
+                post = yield api.posts.getByIDAndPopulate(post_id, skipIndexedDB);
+                if (post.data.status) {
+                    post = yield api.pages.getByIDAndPopulate(post_id, skipIndexedDB);
+                }
+                item.parent = post;
+            }
+            return item;
+        });
+    }
+    /**
      * transform an object and turn it into a string
      * @param {someRequestArguments} args An object with the arguments to pass to the API.
      */
