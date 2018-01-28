@@ -16,7 +16,15 @@ export class Comments extends BaseInteractor {
       nonce
     });
   }
+
+  async getThreads(post: number, skipIndexedDB: boolean = false) {
+    let comments = await this.getByPost(post, 0, skipIndexedDB);
+    return comments;
+  }
 }
 
 // CommentsAPI
 class CommentsAPI extends BaseAPI { }
+
+
+

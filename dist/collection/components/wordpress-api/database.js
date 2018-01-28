@@ -10,7 +10,7 @@ export class Database extends Dexie {
             content: "type",
             posts: "id,slug",
             pages: "id,slug",
-            comments: "id,slug,post",
+            comments: "id,slug,post,parent,[post+parent]",
             media: "id,slug",
             tags: "id,slug",
             categories: "id,slug",

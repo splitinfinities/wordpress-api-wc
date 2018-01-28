@@ -147,6 +147,39 @@ export class BaseInteractor {
         });
     }
     /**
+     * Returns a post by the slug. Hits the follower first.
+     * @param  {string}       slug The slug of the post to return.
+     * @param  {string}       skipIndexedDB Boolean that forces a request to the API.
+     * @return {Promise<object>}    Returns the object from the database.
+     */
+    getByPost(post, parent, skipIndexedDB = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let items;
+            if (!skipIndexedDB) {
+                items = yield this.subject.where({ "post": post, "parent": parent }).toArray();
+            }
+            if (!items) {
+                items = yield this.api.get_request({ 'post': post, 'parent': parent });
+                if (items.data.length === 0) {
+                    throw new WordPressApiError({ message: "No results" });
+                }
+                items = items.data;
+                this.subject.bulkPut(items).catch(Dexie.BulkError, (e) => {
+                    console.debug(`Added ${this.batchCount - e.failures.length} new Users`);
+                });
+            }
+            for (const [index, item] of items.entries()) {
+                try {
+                    items[index].thread = yield this.getByPost(post, item.id, skipIndexedDB);
+                }
+                catch (e) {
+                    items[index].thread = [];
+                }
+            }
+            return items;
+        });
+    }
+    /**
      * Create a new item. Returns the new item.
      * @param {object} payload An object that you pass to create the new item.
      */
@@ -214,19 +247,24 @@ export class BaseInteractor {
                 const post_id = item.post;
                 let post;
                 post = yield api.posts.getByIDAndPopulate(post_id, skipIndexedDB);
-                if (post.data.status) {
+                if (post.data && post.data.status) {
                     post = yield api.pages.getByIDAndPopulate(post_id, skipIndexedDB);
                 }
                 item.post = post;
             }
             if (item.parent && item.parent !== 0) {
-                const post_id = item.post;
-                let post;
-                post = yield api.posts.getByIDAndPopulate(post_id, skipIndexedDB);
-                if (post.data.status) {
-                    post = yield api.pages.getByIDAndPopulate(post_id, skipIndexedDB);
+                const subject_id = item.parent;
+                let subject;
+                if ((item.type === "post" || item.type === "page")) {
+                    subject = yield api.posts.getByIDAndPopulate(subject_id, skipIndexedDB);
+                    if (subject.data.status) {
+                        subject = yield api.pages.getByIDAndPopulate(subject_id, skipIndexedDB);
+                    }
                 }
-                item.parent = post;
+                else if (item.type === "comment") {
+                    subject = yield api.comments.getByIDAndPopulate(subject_id, skipIndexedDB);
+                }
+                item.parent = subject;
             }
             return item;
         });
