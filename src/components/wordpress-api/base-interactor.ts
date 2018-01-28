@@ -36,14 +36,6 @@ export class BaseInteractor {
   }
 
   /**
-   * Loads all items from the database.
-   * @return {Promise<Array>} An array of posts
-   */
-  async all(): Promise<Array<any>> {
-    return this.subject.toArray();
-  }
-
-  /**
    * Populate the database (follower) from the API (leader)
    * @return {Promise<boolean>} A boolean that returns with the first pass sync
    */
@@ -80,13 +72,45 @@ export class BaseInteractor {
   }
 
   /**
+   * Loads all items from the database.
+   * @return {Promise<Array>} An array of posts
+   */
+  async all(args: someRequestArguments = {populate: false}): Promise<Array<any>> {
+    let items;
+
+    if (args.populate) {
+      items = await this.subject.toArray();
+
+      for (const [index, item] of items.entries()) {
+        items[index] = await this.getByIDAndPopulate(item.id)
+      }
+    } else {
+      items = await this.subject.toArray();
+    }
+
+    return items;
+  }
+
+  /**
    * Returns a list of posts. Hits the follower first.
    * @param  {object}  args An object that passes parameters to the REST api
    * @return {Promise<any>}      [description]
    */
-  async some(args: someRequestArguments = {limit: 20, offset: 0, page: undefined}): Promise<any> {
+  async some(args: someRequestArguments = {limit: 20, offset: 0, page: undefined, populate: false}): Promise<any> {
     args = this.cleanSomeParameters(args)
-    return this.subject.offset(args.offset).limit(args.limit).toArray();
+    let items;
+
+    if (args.populate) {
+      items = await this.subject.offset(args.offset).limit(args.limit).toArray();
+
+      for (const [index, item] of items.entries()) {
+        items[index] = await this.getByIDAndPopulate(item.id)
+      }
+    } else {
+      items = await this.subject.offset(args.offset).limit(args.limit).toArray();
+    }
+
+    return items;
   }
 
   /**
@@ -342,5 +366,6 @@ declare interface someRequestArguments {
   limit?: number;
   offset?: number;
   page?: number;
+  populate?: boolean
 }
 

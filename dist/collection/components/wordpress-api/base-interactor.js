@@ -38,15 +38,6 @@ export class BaseInteractor {
         });
     }
     /**
-     * Loads all items from the database.
-     * @return {Promise<Array>} An array of posts
-     */
-    all() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.subject.toArray();
-        });
-    }
-    /**
      * Populate the database (follower) from the API (leader)
      * @return {Promise<boolean>} A boolean that returns with the first pass sync
      */
@@ -78,14 +69,43 @@ export class BaseInteractor {
         });
     }
     /**
+     * Loads all items from the database.
+     * @return {Promise<Array>} An array of posts
+     */
+    all(args = { populate: false }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let items;
+            if (args.populate) {
+                items = yield this.subject.toArray();
+                for (const [index, item] of items.entries()) {
+                    items[index] = yield this.getByIDAndPopulate(item.id);
+                }
+            }
+            else {
+                items = yield this.subject.toArray();
+            }
+            return items;
+        });
+    }
+    /**
      * Returns a list of posts. Hits the follower first.
      * @param  {object}  args An object that passes parameters to the REST api
      * @return {Promise<any>}      [description]
      */
-    some(args = { limit: 20, offset: 0, page: undefined }) {
+    some(args = { limit: 20, offset: 0, page: undefined, populate: false }) {
         return __awaiter(this, void 0, void 0, function* () {
             args = this.cleanSomeParameters(args);
-            return this.subject.offset(args.offset).limit(args.limit).toArray();
+            let items;
+            if (args.populate) {
+                items = yield this.subject.offset(args.offset).limit(args.limit).toArray();
+                for (const [index, item] of items.entries()) {
+                    items[index] = yield this.getByIDAndPopulate(item.id);
+                }
+            }
+            else {
+                items = yield this.subject.offset(args.offset).limit(args.limit).toArray();
+            }
+            return items;
         });
     }
     /**
