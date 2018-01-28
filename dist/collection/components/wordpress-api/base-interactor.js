@@ -93,11 +93,18 @@ export class BaseInteractor {
      * @param  {number}       id The id of the post to return.
      * @return {Promise<object>}    Returns the object from the database.
      */
-    getByID(id) {
+    getByID(id, skipIndexedDB = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            let item = yield this.subject.where("id").equals(id).first();
+            let item;
+            if (!skipIndexedDB) {
+                item = yield this.subject.where("id").equals(id).first();
+            }
             if (!item) {
                 item = yield this.api.one(id);
+                if (item.data.length === 0) {
+                    throw new WordPressApiError({ message: "No results" });
+                }
+                item = item.data;
                 this.subject.put(item).catch((e) => { });
             }
             return item;
@@ -119,11 +126,15 @@ export class BaseInteractor {
     /**
      * Returns a post by the slug. Hits the follower first.
      * @param  {string}       slug The slug of the post to return.
+     * @param  {string}       skipIndexedDB Boolean that forces a request to the API.
      * @return {Promise<object>}    Returns the object from the database.
      */
-    getBySlug(slug) {
+    getBySlug(slug, skipIndexedDB = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            let item = yield this.subject.where("slug").equals(slug).first();
+            let item;
+            if (!skipIndexedDB) {
+                item = yield this.subject.where("slug").equals(slug).first();
+            }
             if (!item) {
                 item = yield this.api.get_request({ 'slug': slug });
                 if (item.data.length === 0) {
