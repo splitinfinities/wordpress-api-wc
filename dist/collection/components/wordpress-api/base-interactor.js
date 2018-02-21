@@ -125,7 +125,7 @@ export class BaseInteractor {
                     throw new WordPressApiError({ message: "No results" });
                 }
                 item = item.data;
-                this.subject.put(item).catch((e) => { });
+                this.subject.put(item).catch(() => { });
             }
             return item;
         });
@@ -161,7 +161,7 @@ export class BaseInteractor {
                     throw new WordPressApiError({ message: "No results" });
                 }
                 item = item.data[0];
-                this.subject.put(item).catch((e) => { });
+                this.subject.put(item).catch(() => { });
             }
             return item;
         });

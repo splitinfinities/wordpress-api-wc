@@ -11,6 +11,8 @@ export class WordpressApi {
     constructor() {
         this.baseUrl = window.location.origin;
         this.name = "WordPress";
+        this.component = "p";
+        this.componentProps = {};
         this.ready = false;
         this.cookie = false;
     }
@@ -18,9 +20,11 @@ export class WordpressApi {
         this.wp = new WordPress(this.baseUrl, this.name, this.nonce);
         this.api = this.wp;
         window["WordPress"] = this;
+        if (this.prepared()) {
+            this.ready = true;
+        }
         this.prepare().then((result) => {
             this.ready = result;
-            console.log('Prepared, mounting');
         });
     }
     signedIn() {
@@ -29,20 +33,23 @@ export class WordpressApi {
     prepare() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.wp.prepareDatabase().then(() => {
+                localStorage.setItem(`${this.name}-populated`, 'true');
                 return true;
-            }).catch((err) => {
+            }).catch(() => {
                 return false;
             });
         });
     }
-    componentDidLoad() {
+    prepared() {
+        return __awaiter(this, void 0, void 0, function* () {
+            localStorage.setItem(`${this.name}-populated`, 'true');
+        });
     }
     render() {
-        return (h("div", null, this.ready
-            ? h("slot", null)
-            : h("div", null)));
+        const childProps = Object.assign({}, this.componentProps);
+        return (h(this.component, Object.assign({}, childProps)));
     }
     static get is() { return "wordpress-api"; }
     static get encapsulation() { return "shadow"; }
-    static get properties() { return { "api": { "type": "Any", "attr": "api", "mutable": true }, "baseUrl": { "type": String, "attr": "base-url" }, "cookie": { "state": true }, "name": { "type": String, "attr": "name" }, "nonce": { "type": String, "attr": "nonce" }, "prepare": { "method": true }, "ready": { "state": true }, "signedIn": { "method": true }, "wp": { "state": true } }; }
+    static get properties() { return { "api": { "type": "Any", "attr": "api", "mutable": true }, "baseUrl": { "type": String, "attr": "base-url" }, "component": { "type": String, "attr": "component" }, "componentProps": { "type": "Any", "attr": "component-props" }, "cookie": { "state": true }, "name": { "type": String, "attr": "name" }, "nonce": { "type": String, "attr": "nonce" }, "prepare": { "method": true }, "prepared": { "method": true }, "ready": { "state": true }, "signedIn": { "method": true }, "wp": { "state": true } }; }
 }

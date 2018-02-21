@@ -27,7 +27,7 @@ export class Media extends BaseInteractor {
       console.debug("beginning sync...")
 
       await this.api.all().then((request) => {
-        this.db.content.put({type: this.endpoint, count: request.totalPages}).catch((e) => {});
+        this.db.content.put({type: this.endpoint, count: request.totalPages}).catch(() => {});
 
         this.subject.bulkPut(request.data).catch(Dexie.BulkError, (e) => {
           console.debug(`Added ${this.batchCount-e.failures.length} new Media`);

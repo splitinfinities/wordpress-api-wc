@@ -5,12 +5,21 @@
  */
 
 
+declare global {
+  interface HTMLStencilElement extends HTMLElement {
+    componentOnReady(): Promise<this>;
+    componentOnReady(done: (ele?: this) => void): void;
+  }
+}
+
+
+
 import {
   WordpressApi as WordpressApi
 } from './components/wordpress-api/wordpress-api';
 
 declare global {
-  interface HTMLWordpressApiElement extends WordpressApi, HTMLElement {
+  interface HTMLWordpressApiElement extends WordpressApi, HTMLStencilElement {
   }
   var HTMLWordpressApiElement: {
     prototype: HTMLWordpressApiElement;
@@ -31,6 +40,8 @@ declare global {
     export interface WordpressApiAttributes extends HTMLAttributes {
       api?: any;
       baseUrl?: string;
+      component?: string;
+      componentProps?: { [key: string]: any };
       name?: string;
       nonce?: string;
     }

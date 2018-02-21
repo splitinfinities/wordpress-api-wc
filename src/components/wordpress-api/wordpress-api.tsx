@@ -9,6 +9,8 @@ import { WordPress } from './wordpress';
 export class WordpressApi {
   @Prop() baseUrl: string = window.location.origin;
   @Prop() name: string = "WordPress";
+  @Prop() component: string = "p";
+  @Prop() componentProps: { [key: string]: any } = {};
   @Prop() nonce: string;
   @Prop({mutable: true}) api: any;
   @State() wp;
@@ -21,9 +23,12 @@ export class WordpressApi {
 
     window["WordPress"] = this;
 
+    if (this.prepared()) {
+      this.ready = true;
+    }
+
     this.prepare().then((result) => {
       this.ready = result;
-      console.log('Prepared, mounting')
     });
   }
 
@@ -35,25 +40,25 @@ export class WordpressApi {
   @Method()
   async prepare() {
     return await this.wp.prepareDatabase().then(() => {
+      localStorage.setItem(`${this.name}-populated`, 'true');
        return true;
-    }).catch((err) => {
+    }).catch(() => {
       return false;
     });
   }
 
-  componentDidLoad() {
-
+  @Method()
+  async prepared() {
+    localStorage.setItem(`${this.name}-populated`, 'true');
   }
 
   render () {
+    const childProps = {
+      ...this.componentProps,
+    };
+
     return (
-      <div>
-        {
-          this.ready
-          ? <slot></slot>
-          : <div></div>
-        }
-      </div>
+      <this.component {...childProps} />
     )
   }
 }
