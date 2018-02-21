@@ -49,7 +49,9 @@ export class WordpressApi {
 
   @Method()
   async prepared() {
-    localStorage.setItem(`${this.name}-populated`, 'true');
+    const item = localStorage.getItem(`${this.name}-populated`);
+
+    return item === "true";
   }
 
   render () {
@@ -58,7 +60,7 @@ export class WordpressApi {
     };
 
     return (
-      <this.component {...childProps} />
+      this.ready && <this.component {...childProps} />
     )
   }
 }

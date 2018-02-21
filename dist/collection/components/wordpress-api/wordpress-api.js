@@ -42,12 +42,13 @@ export class WordpressApi {
     }
     prepared() {
         return __awaiter(this, void 0, void 0, function* () {
-            localStorage.setItem(`${this.name}-populated`, 'true');
+            const item = localStorage.getItem(`${this.name}-populated`);
+            return item === "true";
         });
     }
     render() {
         const childProps = Object.assign({}, this.componentProps);
-        return (h(this.component, Object.assign({}, childProps)));
+        return (this.ready && h(this.component, Object.assign({}, childProps)));
     }
     static get is() { return "wordpress-api"; }
     static get encapsulation() { return "shadow"; }

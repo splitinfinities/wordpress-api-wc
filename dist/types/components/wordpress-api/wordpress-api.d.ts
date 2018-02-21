@@ -13,6 +13,6 @@ export declare class WordpressApi {
     componentWillLoad(): void;
     signedIn(): boolean;
     prepare(): Promise<any>;
-    prepared(): Promise<void>;
+    prepared(): Promise<boolean>;
     render(): JSX.Element;
 }

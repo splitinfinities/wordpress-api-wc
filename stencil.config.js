@@ -1,9 +1,6 @@
 exports.config = {
   namespace: 'wordpress-api',
-  generateDistribution: true,
-  bundles: [
-    { components: ['wordpress-api'] }
-  ],
+  generateDistribution: true
 };
 
 exports.devServer = {
