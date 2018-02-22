@@ -53,8 +53,7 @@
         {
           "name": "signedIn"
         }
-      ],
-      "shadow": true
+      ]
     }
   ],
   "compiler": {

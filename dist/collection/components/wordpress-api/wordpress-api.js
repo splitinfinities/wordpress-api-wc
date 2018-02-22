@@ -51,6 +51,5 @@ export class WordpressApi {
         return (this.ready && h(this.component, Object.assign({}, childProps)));
     }
     static get is() { return "wordpress-api"; }
-    static get encapsulation() { return "shadow"; }
     static get properties() { return { "api": { "type": "Any", "attr": "api", "mutable": true }, "baseUrl": { "type": String, "attr": "base-url" }, "component": { "type": String, "attr": "component" }, "componentProps": { "type": "Any", "attr": "component-props" }, "cookie": { "state": true }, "name": { "type": String, "attr": "name" }, "nonce": { "type": String, "attr": "nonce" }, "prepare": { "method": true }, "prepared": { "method": true }, "ready": { "state": true }, "signedIn": { "method": true }, "wp": { "state": true } }; }
 }

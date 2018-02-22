@@ -2,8 +2,7 @@ import { Component, Prop, State, Method } from '@stencil/core';
 import { WordPress } from './wordpress';
 
 @Component({
-  tag: 'wordpress-api',
-  shadow: true
+  tag: 'wordpress-api'
 })
 
 export class WordpressApi {
