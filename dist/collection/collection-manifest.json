@@ -45,6 +45,9 @@
       ],
       "methods": [
         {
+          "name": "mountUp"
+        },
+        {
           "name": "prepare"
         },
         {
@@ -53,7 +56,10 @@
         {
           "name": "signedIn"
         }
-      ]
+      ],
+      "hostElement": {
+        "name": "element"
+      }
     }
   ],
   "compiler": {

@@ -1,4 +1,5 @@
 export declare class WordpressApi {
+    element: HTMLElement;
     baseUrl: string;
     name: string;
     component: string;
@@ -12,7 +13,8 @@ export declare class WordpressApi {
     cookie: boolean;
     componentWillLoad(): void;
     signedIn(): boolean;
+    mountUp(): void;
     prepare(): Promise<any>;
-    prepared(): Promise<boolean>;
+    prepared(): boolean;
     render(): JSX.Element;
 }

@@ -1,4 +1,4 @@
-import { Component, Prop, State, Method } from '@stencil/core';
+import { Component, Prop, State, Method, Element } from '@stencil/core';
 import { WordPress } from './wordpress';
 
 @Component({
@@ -6,6 +6,7 @@ import { WordPress } from './wordpress';
 })
 
 export class WordpressApi {
+  @Element() element: HTMLElement;
   @Prop() baseUrl: string = window.location.origin;
   @Prop() name: string = "WordPress";
   @Prop() component: string = "p";
@@ -23,10 +24,12 @@ export class WordpressApi {
     window["WordPress"] = this;
 
     if (this.prepared()) {
+      this.mountUp();
       this.ready = true;
     }
 
     this.prepare().then((result) => {
+      this.mountUp();
       this.ready = result;
     });
   }
@@ -34,6 +37,11 @@ export class WordpressApi {
   @Method()
   signedIn() {
     return this.cookie;
+  }
+
+  @Method()
+  mountUp() {
+    this.element.innerHTML = "";
   }
 
   @Method()
@@ -47,9 +55,8 @@ export class WordpressApi {
   }
 
   @Method()
-  async prepared() {
+  prepared() {
     const item = localStorage.getItem(`${this.name}-populated`);
-
     return item === "true";
   }
 

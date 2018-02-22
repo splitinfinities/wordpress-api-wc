@@ -21,14 +21,19 @@ export class WordpressApi {
         this.api = this.wp;
         window["WordPress"] = this;
         if (this.prepared()) {
+            this.mountUp();
             this.ready = true;
         }
         this.prepare().then((result) => {
+            this.mountUp();
             this.ready = result;
         });
     }
     signedIn() {
         return this.cookie;
+    }
+    mountUp() {
+        this.element.innerHTML = "";
     }
     prepare() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,15 +46,13 @@ export class WordpressApi {
         });
     }
     prepared() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const item = localStorage.getItem(`${this.name}-populated`);
-            return item === "true";
-        });
+        const item = localStorage.getItem(`${this.name}-populated`);
+        return item === "true";
     }
     render() {
         const childProps = Object.assign({}, this.componentProps);
         return (this.ready && h(this.component, Object.assign({}, childProps)));
     }
     static get is() { return "wordpress-api"; }
-    static get properties() { return { "api": { "type": "Any", "attr": "api", "mutable": true }, "baseUrl": { "type": String, "attr": "base-url" }, "component": { "type": String, "attr": "component" }, "componentProps": { "type": "Any", "attr": "component-props" }, "cookie": { "state": true }, "name": { "type": String, "attr": "name" }, "nonce": { "type": String, "attr": "nonce" }, "prepare": { "method": true }, "prepared": { "method": true }, "ready": { "state": true }, "signedIn": { "method": true }, "wp": { "state": true } }; }
+    static get properties() { return { "api": { "type": "Any", "attr": "api", "mutable": true }, "baseUrl": { "type": String, "attr": "base-url" }, "component": { "type": String, "attr": "component" }, "componentProps": { "type": "Any", "attr": "component-props" }, "cookie": { "state": true }, "element": { "elementRef": true }, "mountUp": { "method": true }, "name": { "type": String, "attr": "name" }, "nonce": { "type": String, "attr": "nonce" }, "prepare": { "method": true }, "prepared": { "method": true }, "ready": { "state": true }, "signedIn": { "method": true }, "wp": { "state": true } }; }
 }
