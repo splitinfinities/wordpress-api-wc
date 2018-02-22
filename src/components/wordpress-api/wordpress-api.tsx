@@ -41,7 +41,7 @@ export class WordpressApi {
 
   @Method()
   mountUp() {
-    this.element.innerHTML = "";
+    this.element.querySelector('.interim').innerHTML = "";
   }
 
   @Method()
@@ -65,8 +65,9 @@ export class WordpressApi {
       ...this.componentProps,
     };
 
-    return (
-      this.ready && <this.component {...childProps} />
-    )
+    return [
+      this.ready && <this.component {...childProps} />,
+      <div class="interim"><slot></slot></div>
+    ]
   }
 }

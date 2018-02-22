@@ -33,7 +33,7 @@ export class WordpressApi {
         return this.cookie;
     }
     mountUp() {
-        this.element.innerHTML = "";
+        this.element.querySelector('.interim').innerHTML = "";
     }
     prepare() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -51,7 +51,11 @@ export class WordpressApi {
     }
     render() {
         const childProps = Object.assign({}, this.componentProps);
-        return (this.ready && h(this.component, Object.assign({}, childProps)));
+        return [
+            this.ready && h(this.component, Object.assign({}, childProps)),
+            h("div", { class: "interim" },
+                h("slot", null))
+        ];
     }
     static get is() { return "wordpress-api"; }
     static get properties() { return { "api": { "type": "Any", "attr": "api", "mutable": true }, "baseUrl": { "type": String, "attr": "base-url" }, "component": { "type": String, "attr": "component" }, "componentProps": { "type": "Any", "attr": "component-props" }, "cookie": { "state": true }, "element": { "elementRef": true }, "mountUp": { "method": true }, "name": { "type": String, "attr": "name" }, "nonce": { "type": String, "attr": "nonce" }, "prepare": { "method": true }, "prepared": { "method": true }, "ready": { "state": true }, "signedIn": { "method": true }, "wp": { "state": true } }; }

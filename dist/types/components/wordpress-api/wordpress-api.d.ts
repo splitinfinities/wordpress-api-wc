@@ -16,5 +16,5 @@ export declare class WordpressApi {
     mountUp(): void;
     prepare(): Promise<any>;
     prepared(): boolean;
-    render(): JSX.Element;
+    render(): JSX.Element[];
 }
