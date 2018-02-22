@@ -29,7 +29,10 @@ export class WordpressApi {
     }
 
     this.prepare().then((result) => {
-      this.mountUp();
+      if (!this.ready) {
+        this.mountUp();
+      }
+
       this.ready = result;
     });
   }
@@ -41,7 +44,7 @@ export class WordpressApi {
 
   @Method()
   mountUp() {
-    this.element.querySelector('.interim').innerHTML = "";
+    this.element.innerHTML = "";
   }
 
   @Method()
@@ -65,9 +68,8 @@ export class WordpressApi {
       ...this.componentProps,
     };
 
-    return [
-      this.ready && <this.component {...childProps} />,
-      <div class="interim"><slot></slot></div>
-    ]
+    return (
+      this.ready && <this.component {...childProps} />
+    )
   }
 }
